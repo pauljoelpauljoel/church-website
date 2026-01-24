@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "name": "Rev. Dr. John Doe",
+        "role": "மூத்த போதகர்",
+        "image": "/uploads/team/1769239863845-239469384.jpg",
+        "quote": "அன்புடன் வழிநடத்துதல் மற்றும் ஆவியானவரால் வழிநடத்தப்படுதல்."
+    },
+    {
+        "id": 2,
+        "name": "Pastor Sarah Smith",
+        "role": "உதவி போதகர்",
+        "image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop",
+        "quote": "இளைஞர்கள் மற்றும் சமூக சேவையில் ஆர்வம் கொண்டவர்."
+    }
+]

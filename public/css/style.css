@@ -238,3 +238,45 @@ h2.section-title::after {
     padding: 0.5em 1em;
     border-radius: 15px;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 6rem 1rem 3rem;
+        /* Slightly reduced top padding, more side room */
+        border-radius: 0 0 25px 25px;
+        /* Smaller radius */
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+        /* Significantly smaller */
+    }
+
+    .hero-quote {
+        font-size: 1.1rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.4rem;
+    }
+
+    .nav-link {
+        margin: 5px 0;
+        /* Add vertical spacing in mobile menu */
+    }
+
+    h1.page-title,
+    h2.section-title {
+        font-size: 2rem;
+    }
+
+    p.lead {
+        font-size: 1.1rem;
+    }
+
+    /* Adjust cards */
+    .card {
+        margin-bottom: 1.5rem;
+    }
+}
