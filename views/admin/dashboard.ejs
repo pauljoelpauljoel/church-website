@@ -1,0 +1,60 @@
+<%- include('../partials/header') %>
+
+    <div class="container mt-4">
+        <h1>Admin Dashboard</h1>
+        <hr>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="/admin/dashboard" class="list-group-item list-group-item-action active">Dashboard</a>
+                    <a href="/admin/prayers" class="list-group-item list-group-item-action">Prayer Requests</a>
+                    <a href="/admin/events" class="list-group-item list-group-item-action">Manage Events</a>
+                    <a href="/admin/sermons" class="list-group-item list-group-item-action">Manage Sermons</a>
+                    <a href="/admin/services" class="list-group-item list-group-item-action">Manage Schedule</a>
+                    <a href="/admin/gallery" class="list-group-item list-group-item-action">Manage Gallery</a>
+                    <a href="/admin/logout" class="list-group-item list-group-item-action text-danger">Logout</a>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card text-white bg-primary h-100">
+                            <div class="card-header">Prayer Requests</div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <%= prayerCount %> New
+                                </h5>
+                                <a href="/admin/prayers" class="btn btn-light btn-sm text-primary stretched-link">View
+                                    All</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card text-white bg-success h-100">
+                            <div class="card-header">Events</div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <%= eventCount %> Active
+                                </h5>
+                                <a href="/admin/events"
+                                    class="btn btn-light btn-sm text-success stretched-link">Manage</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card text-white bg-warning h-100">
+                            <div class="card-header text-dark">Sermons</div>
+                            <div class="card-body text-dark">
+                                <h5 class="card-title">
+                                    <%= typeof sermonCount !=='undefined' ? sermonCount : 0 %> Archived
+                                </h5>
+                                <a href="/admin/sermons" class="btn btn-dark btn-sm stretched-link">Manage</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

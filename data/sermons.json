@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "title": "Faith in Difficult Times",
+        "preacher": "Rev. Dr. John Doe",
+        "date": "2023-11-05",
+        "videoUrl": "https://www.youtube.com/embed/sample",
+        "audioUrl": "#",
+        "description": "Learning to trust God when things are tough."
+    },
+    {
+        "id": 2,
+        "title": "The Power of Prayer",
+        "preacher": "Pastor Sarah Smith",
+        "date": "2023-11-12",
+        "videoUrl": "https://www.youtube.com/embed/sample",
+        "audioUrl": "#",
+        "description": "Understanding how prayer changes things."
+    }
+]

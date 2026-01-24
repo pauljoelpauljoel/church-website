@@ -1,0 +1,109 @@
+<%- include('partials/header') %>
+
+    <!-- Hero Section -->
+    <div class="hero-section text-white d-flex align-items-center justify-content-center">
+        <div class="container text-center">
+            <h1 class="hero-title" data-aos="fade-down">
+                <%= t.welcome_title %>
+            </h1>
+            <p class="hero-quote" data-aos="fade-up" data-aos-delay="200">
+                <%= t.welcome_quote %>
+            </p>
+            <div class="mt-4" data-aos="zoom-in" data-aos-delay="400">
+                <a href="/services" class="btn btn-primary btn-lg me-3">
+                    <%= t.join_service %>
+                </a>
+                <a href="/events" class="btn btn-outline-light btn-lg">
+                    <%= t.upcoming_events %>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container mb-5">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card h-100 p-4">
+                    <div class="card-body">
+                        <i class="fas fa-church fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">
+                            <%= t.worship %>
+                        </h3>
+                        <p class="card-text">
+                            <%= t.worship_text %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card h-100 p-4">
+                    <div class="card-body">
+                        <i class="fas fa-hands-helping fa-3x text-secondary mb-3"></i>
+                        <h3 class="card-title">
+                            <%= t.community %>
+                        </h3>
+                        <p class="card-text">
+                            <%= t.community_text %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="card h-100 p-4">
+                    <div class="card-body">
+                        <i class="fas fa-bible fa-3x text-warning mb-3"></i>
+                        <h3 class="card-title">
+                            <%= t.word %>
+                        </h3>
+                        <p class="card-text">
+                            <%= t.word_text %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events Preview -->
+    <div class="container mb-5">
+        <h2 class="section-title text-center w-100 mb-5" data-aos="fade-right">
+            <%= t.upcoming_events %>
+        </h2>
+        <div class="row">
+            <% if(events && events.length> 0) { %>
+                <% events.forEach((event, index)=> { %>
+                    <div class="col-md-4 mb-4" data-aos="flip-left" data-aos-delay="<%= index * 100 %>">
+                        <div class="card h-100">
+                            <img src="<%= event.image %>" class="card-img-top" alt="<%= event.title %>"
+                                onerror="this.src='https://source.unsplash.com/400x300/?church,event'">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <%= event.title %>
+                                </h5>
+                                <p class="text-muted small"><i class="far fa-calendar-alt me-2"></i>
+                                    <%= event.date %>
+                                </p>
+                                <p class="card-text">
+                                    <%= event.description.substring(0, 80) %>...
+                                </p>
+                                <a href="/events" class="btn btn-sm btn-outline-primary">
+                                    <%= t.read_more %>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                        <% } %>
+        </div>
+    </div>
+
+    <!-- Admin Floating Button -->
+    <a href="/admin"
+        class="btn btn-dark position-fixed bottom-0 end-0 m-4 rounded-circle shadow-lg d-flex align-items-center justify-content-center"
+        style="width: 60px; height: 60px; z-index: 1000; border: 2px solid rgba(255,255,255,0.2);" title="Admin Panel"
+        data-aos="zoom-in" data-aos-delay="1000">
+        <i class="fas fa-user-shield fa-lg"></i>
+    </a>
+
+    <%- include('partials/footer') %>

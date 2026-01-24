@@ -1,0 +1,87 @@
+<%- include('partials/header') %>
+
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="page-title display-4 fw-bold" data-aos="fade-down">
+                <%= t.about_title %>
+            </h1>
+            <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
+                <%= t.about_lead %>
+            </p>
+        </div>
+
+        <!-- Vision & Mission -->
+        <div class="row mb-5">
+            <div class="col-md-6 mb-4" data-aos="fade-right">
+                <div class="card h-100 border-0 shadow-lg bg-light">
+                    <div class="card-body p-5">
+                        <div class="mb-3 text-primary"><i class="fas fa-eye fa-3x"></i></div>
+                        <h3 class="card-title fw-bold">
+                            <%= t.vision_title %>
+                        </h3>
+                        <p class="card-text fs-5">
+                            <%= t.vision_text %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4" data-aos="fade-left">
+                <div class="card h-100 border-0 shadow-lg bg-light">
+                    <div class="card-body p-5">
+                        <div class="mb-3 text-secondary"><i class="fas fa-bullseye fa-3x"></i></div>
+                        <h3 class="card-title fw-bold">
+                            <%= t.mission_title %>
+                        </h3>
+                        <p class="card-text fs-5">
+                            <%= t.mission_text %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-5" data-aos="zoom-in">
+
+        <!-- Leadership Section -->
+        <div class="mt-5">
+            <h2 class="section-title text-center w-100 mb-5" data-aos="fade-up">
+                <%= t.leadership_title %>
+            </h2>
+            <div class="row justify-content-center">
+                <div class="col-md-4 text-center mb-4" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop"
+                                    class="rounded-circle shadow" alt="Pastor"
+                                    style="width: 150px; height: 150px; object-fit: cover;">
+                            </div>
+                            <h4 class="card-title fw-bold text-primary">Rev. Dr. John Doe</h4>
+                            <p class="text-muted badge-custom d-inline-block text-white">
+                                <%= t.senior_pastor %>
+                            </p>
+                            <p class="mt-3">"<%= t.pastor_quote_1 %>"</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center mb-4" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop"
+                                    class="rounded-circle shadow" alt="Associate Pastor"
+                                    style="width: 150px; height: 150px; object-fit: cover;">
+                            </div>
+                            <h4 class="card-title fw-bold text-primary">Pastor Sarah Smith</h4>
+                            <p class="text-muted badge-custom d-inline-block text-white">
+                                <%= t.associate_pastor %>
+                            </p>
+                            <p class="mt-3">"<%= t.pastor_quote_2 %>"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

@@ -1,0 +1,56 @@
+<%- include('../../partials/header') %>
+
+    <div class="container mt-5">
+        <h1>Manage Services</h1>
+        <a href="/admin/dashboard" class="btn btn-secondary mb-3">&larr; Back to Dashboard</a>
+        <a href="/admin/services/new" class="btn btn-primary mb-3 float-end"><i class="fas fa-plus"></i> Add New
+            Service</a>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Service Name</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if(services.length> 0) { %>
+                        <% services.forEach(service=> { %>
+                            <tr>
+                                <td class="fw-bold">
+                                    <%= service.name %>
+                                </td>
+                                <td>
+                                    <%= service.day %>
+                                </td>
+                                <td>
+                                    <%= service.time %>
+                                </td>
+                                <td>
+                                    <%= service.location %>
+                                </td>
+                                <td>
+                                    <a href="/admin/services/<%= service.id %>/edit" class="btn btn-sm btn-primary"><i
+                                            class="fas fa-edit"></i></a>
+                                    <form action="/admin/services/<%= service.id %>?_method=DELETE" method="POST"
+                                        class="d-inline" onsubmit="return confirm('Are you sure?');">
+                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="text-center">No services found.</td>
+                                    </tr>
+                                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <%- include('../../partials/footer') %>

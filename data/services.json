@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "Sunday Mass (English)",
+    "day": "Sunday",
+    "time": "8:00 AM",
+    "location": "Main Sanctuary"
+  },
+  {
+    "id": 2,
+    "name": "Sunday Mass (Tamil)",
+    "day": "Sunday",
+    "time": "10:30 AM",
+    "location": "Main Sanctuary"
+  },
+  {
+    "id": 3,
+    "name": "Wednesday Evening Prayer",
+    "day": "Wednesday",
+    "time": "6:30 PM",
+    "location": "Chapel"
+  },
+  {
+    "id": 4,
+    "name": "Friday Fasting Prayer",
+    "day": "Friday",
+    "time": "10:00 AM",
+    "location": "Prayer Hall"
+  }
+]

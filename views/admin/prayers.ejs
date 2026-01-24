@@ -1,0 +1,53 @@
+<%- include('../partials/header') %>
+
+    <div class="container mt-4">
+        <h1>Prayer Requests</h1>
+        <a href="/admin/dashboard" class="btn btn-secondary mb-3">&larr; Back to Dashboard</a>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Message</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if(prayers.length> 0) { %>
+                        <% prayers.forEach(p=> { %>
+                            <tr>
+                                <td>
+                                    <%= p.id %>
+                                </td>
+                                <td>
+                                    <%= p.name %>
+                                </td>
+                                <td>
+                                    <%= p.message %>
+                                </td>
+                                <td>
+                                    <% if(p.confidential) { %>
+                                        <span class="badge bg-danger">Confidential</span>
+                                        <% } else { %>
+                                            <span class="badge bg-success">Public</span>
+                                            <% } %>
+                                </td>
+                                <td>
+                                    <%= new Date(p.date).toLocaleDateString() %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="text-center">No prayer requests found.</td>
+                                    </tr>
+                                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

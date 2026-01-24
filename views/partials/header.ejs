@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="<%= currentLang %>">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Church | <%= title %>
+    </title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+</head>
+
+<body class="d-flex flex-column vh-100">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Indian Church</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <%= t.home %>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">
+                            <%= t.about %>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/services">
+                            <%= t.services %>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/events">
+                            <%= t.events %>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/sermons">
+                            <%= t.sermons %>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/gallery">
+                            <%= t.gallery %>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">
+                            <%= t.contact %>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-donate-nav text-dark ms-2" href="/donate">
+                            <%= t.donate %>
+                        </a>
+                    </li>
+
+                    <!-- Language Switcher -->
+                    <li class="nav-item dropdown ms-2">
+                        <a class="nav-link dropdown-toggle btn btn-outline-light" href="#" id="navbarDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-globe me-1"></i>
+                            <%= currentLang==='en' ? 'English' : 'தமிழ்' %>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="/lang/en">English</a></li>
+                            <li><a class="dropdown-item" href="/lang/ta">தமிழ்</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>

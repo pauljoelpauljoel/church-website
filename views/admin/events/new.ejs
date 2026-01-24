@@ -1,0 +1,41 @@
+<%- include('../../partials/header') %>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Add New Event</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="/admin/events" method="POST">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Event Title</label>
+                                <input type="text" name="title" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Date</label>
+                                <input type="date" name="date" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Image URL</label>
+                                <input type="url" name="image" class="form-control"
+                                    placeholder="https://images.unsplash.com/..." required>
+                                <div class="form-text">Paste a URL from Unsplash or other image hosts.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Description</label>
+                                <textarea name="description" class="form-control" rows="5" required></textarea>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">Create Event</button>
+                                <a href="/admin/events" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../../partials/footer') %>

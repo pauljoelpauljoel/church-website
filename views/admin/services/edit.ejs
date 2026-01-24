@@ -1,0 +1,57 @@
+<%- include('../../partials/header') %>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-warning text-dark">
+                        <h3 class="mb-0">Edit Service</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="/admin/services/<%= service.id %>?_method=PUT" method="POST">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Service Name</label>
+                                <input type="text" name="name" class="form-control" value="<%= service.name %>"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Day</label>
+                                <select name="day" class="form-select" required>
+                                    <option value="Sunday" <%=service.day==='Sunday' ? 'selected' : '' %>>Sunday
+                                    </option>
+                                    <option value="Monday" <%=service.day==='Monday' ? 'selected' : '' %>>Monday
+                                    </option>
+                                    <option value="Tuesday" <%=service.day==='Tuesday' ? 'selected' : '' %>>Tuesday
+                                    </option>
+                                    <option value="Wednesday" <%=service.day==='Wednesday' ? 'selected' : '' %>
+                                        >Wednesday</option>
+                                    <option value="Thursday" <%=service.day==='Thursday' ? 'selected' : '' %>>Thursday
+                                    </option>
+                                    <option value="Friday" <%=service.day==='Friday' ? 'selected' : '' %>>Friday
+                                    </option>
+                                    <option value="Saturday" <%=service.day==='Saturday' ? 'selected' : '' %>>Saturday
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Time</label>
+                                <input type="text" name="time" class="form-control" value="<%= service.time %>"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Location</label>
+                                <input type="text" name="location" class="form-control" value="<%= service.location %>"
+                                    required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-warning btn-lg">Update Service</button>
+                                <a href="/admin/services" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../../partials/footer') %>

@@ -1,0 +1,53 @@
+<%- include('../../partials/header') %>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-warning text-dark">
+                        <h3 class="mb-0">Edit Sermon</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="/admin/sermons/<%= sermon.id %>?_method=PUT" method="POST">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Sermon Title</label>
+                                    <input type="text" name="title" class="form-control" value="<%= sermon.title %>"
+                                        required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Preacher</label>
+                                    <input type="text" name="preacher" class="form-control"
+                                        value="<%= sermon.preacher %>" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Date</label>
+                                <input type="date" name="date" class="form-control" value="<%= sermon.date %>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Video URL</label>
+                                <input type="url" name="videoUrl" class="form-control" value="<%= sermon.videoUrl %>"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Audio URL</label>
+                                <input type="text" name="audioUrl" class="form-control" value="<%= sermon.audioUrl %>">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Description</label>
+                                <textarea name="description" class="form-control" rows="4"
+                                    required><%= sermon.description %></textarea>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-warning btn-lg">Update Sermon</button>
+                                <a href="/admin/sermons" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../../partials/footer') %>
