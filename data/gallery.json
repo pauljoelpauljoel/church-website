@@ -1,32 +1,37 @@
 [
-    {
-        "id": 1,
-        "url": "https://images.unsplash.com/photo-1548625361-8889787590d5?q=80&w=1568&auto=format&fit=crop",
-        "caption": "Church Exterior"
-    },
-    {
-        "id": 2,
-        "url": "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=1473&auto=format&fit=crop",
-        "caption": "Sunday Worship"
-    },
-    {
-        "id": 3,
-        "url": "https://images.unsplash.com/photo-1507692864668-ad669917caa2?q=80&w=1470&auto=format&fit=crop",
-        "caption": "Prayer Service"
-    },
-    {
-        "id": 4,
-        "url": "https://images.unsplash.com/photo-1601140087878-83733d942ce2?q=80&w=1374&auto=format&fit=crop",
-        "caption": "Holy Bible"
-    },
-    {
-        "id": 5,
-        "url": "https://images.unsplash.com/photo-1510936111840-65e151ad71bb?q=80&w=1490&auto=format&fit=crop",
-        "caption": "Christmas Celebration"
-    },
-    {
-        "id": 6,
-        "url": "https://images.unsplash.com/photo-1515238152791-8216bfdf89a7?q=80&w=1472&auto=format&fit=crop",
-        "caption": "Community Fellowship"
-    }
+  {
+    "id": 1,
+    "url": "https://images.unsplash.com/photo-1548625361-8889787590d5?q=80&w=1568&auto=format&fit=crop",
+    "caption": "Church Exterior"
+  },
+  {
+    "id": 2,
+    "url": "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=1473&auto=format&fit=crop",
+    "caption": "Sunday Worship"
+  },
+  {
+    "id": 3,
+    "url": "https://images.unsplash.com/photo-1507692864668-ad669917caa2?q=80&w=1470&auto=format&fit=crop",
+    "caption": "Prayer Service"
+  },
+  {
+    "id": 4,
+    "url": "https://images.unsplash.com/photo-1601140087878-83733d942ce2?q=80&w=1374&auto=format&fit=crop",
+    "caption": "Holy Bible"
+  },
+  {
+    "id": 5,
+    "url": "https://images.unsplash.com/photo-1510936111840-65e151ad71bb?q=80&w=1490&auto=format&fit=crop",
+    "caption": "Christmas Celebration"
+  },
+  {
+    "id": 6,
+    "url": "https://images.unsplash.com/photo-1515238152791-8216bfdf89a7?q=80&w=1472&auto=format&fit=crop",
+    "caption": "Community Fellowship"
+  },
+  {
+    "id": 1769238570158,
+    "url": "/uploads/gallery/1769238570133-370129481.jpg",
+    "caption": "jesus like you"
+  }
 ]

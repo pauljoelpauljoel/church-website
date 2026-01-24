@@ -2,6 +2,24 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
+
+// Configure Multer
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const dir = path.join(__dirname, '../public/uploads/gallery');
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        cb(null, dir);
+    },
+    filename: (req, file, cb) => {
+        // Unique filename: timestamp + original extension
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage: storage });
 
 // Redirect /admin to /admin/dashboard
 router.get('/', (req, res) => {
@@ -267,11 +285,22 @@ router.get('/gallery/new', requireLogin, (req, res) => {
 });
 
 // Create Photo
-router.post('/gallery', requireLogin, (req, res) => {
+// Create Photo
+router.post('/gallery', requireLogin, upload.single('image'), (req, res) => {
     const gallery = readData('gallery.json');
+
+    let imageUrl = '';
+    if (req.file) {
+        // Store relative path for frontend access
+        imageUrl = '/uploads/gallery/' + req.file.filename;
+    } else if (req.body.url) {
+        // Fallback or if we somehow decide to keep URL (though form only has file now)
+        imageUrl = req.body.url;
+    }
+
     const newPhoto = {
         id: Date.now(),
-        url: req.body.url,
+        url: imageUrl,
         caption: req.body.caption
     };
     gallery.push(newPhoto);
