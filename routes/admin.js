@@ -21,6 +21,22 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+const uploadTeam = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            const dir = path.join(__dirname, '../public/uploads/team');
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
+            }
+            cb(null, dir);
+        },
+        filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            cb(null, uniqueSuffix + path.extname(file.originalname));
+        }
+    })
+});
+
 // Redirect /admin to /admin/dashboard
 router.get('/', (req, res) => {
     res.redirect('/admin/dashboard');
@@ -35,11 +51,87 @@ const requireLogin = (req, res, next) => {
 };
 
 // Helper helper
+// Helper helper
 const readData = (filename) => {
     const filePath = path.join(__dirname, '../data', filename);
     if (!fs.existsSync(filePath)) return [];
     return JSON.parse(fs.readFileSync(filePath));
 };
+
+// --- TEAM MANAGEMENT ---
+
+// List Team Members
+router.get('/team', requireLogin, (req, res) => {
+    const team = readData('team.json');
+    res.render('admin/team/index', { title: 'Manage Team', team });
+});
+
+// New Team Member Form
+router.get('/team/new', requireLogin, (req, res) => {
+    res.render('admin/team/new', { title: 'Add Team Member' });
+});
+
+// Create Team Member
+router.post('/team', requireLogin, uploadTeam.single('image'), (req, res) => {
+    const team = readData('team.json');
+    let imageUrl = '';
+    if (req.file) {
+        imageUrl = '/uploads/team/' + req.file.filename;
+    } else {
+        // Default image logic or require image can be handled here
+        imageUrl = 'https://via.placeholder.com/150';
+    }
+
+    const newMember = {
+        id: Date.now(),
+        name: req.body.name,
+        role: req.body.role,
+        image: imageUrl,
+        quote: req.body.quote
+    };
+    team.push(newMember);
+    writeData('team.json', team);
+    res.redirect('/admin/team');
+});
+
+// Edit Team Member Form
+router.get('/team/:id/edit', requireLogin, (req, res) => {
+    const team = readData('team.json');
+    const member = team.find(m => m.id == req.params.id);
+    if (!member) return res.redirect('/admin/team');
+    res.render('admin/team/edit', { title: 'Edit Team Member', member });
+});
+
+// Update Team Member
+router.post('/team/:id', requireLogin, uploadTeam.single('image'), (req, res) => {
+    let team = readData('team.json');
+    const index = team.findIndex(m => m.id == req.params.id);
+
+    if (index !== -1) {
+        let imageUrl = team[index].image;
+        if (req.file) {
+            imageUrl = '/uploads/team/' + req.file.filename;
+        }
+
+        team[index] = {
+            ...team[index],
+            name: req.body.name,
+            role: req.body.role,
+            quote: req.body.quote,
+            image: imageUrl
+        };
+        writeData('team.json', team);
+    }
+    res.redirect('/admin/team');
+});
+
+// Delete Team Member
+router.delete('/team/:id', requireLogin, (req, res) => {
+    let team = readData('team.json');
+    team = team.filter(m => m.id != req.params.id);
+    writeData('team.json', team);
+    res.redirect('/admin/team');
+});
 
 const writeData = (filename, data) => {
     const filePath = path.join(__dirname, '../data', filename);
@@ -81,6 +173,29 @@ router.get('/dashboard', requireLogin, (req, res) => {
 router.get('/prayers', requireLogin, (req, res) => {
     const prayers = readData('prayers.json');
     res.render('admin/prayers', { title: 'Prayer Requests', prayers });
+});
+
+// --- ABOUT MANAGEMENT ---
+
+// Edit About Content
+router.get('/about', requireLogin, (req, res) => {
+    const about = readData('about.json');
+    res.render('admin/about/edit', { title: 'Edit About Us', about });
+});
+
+// Update About Content
+router.post('/about', requireLogin, (req, res) => {
+    const updatedAbout = {
+        title: req.body.title,
+        lead: req.body.lead,
+        visionTitle: req.body.visionTitle,
+        visionText: req.body.visionText,
+        missionTitle: req.body.missionTitle,
+        missionText: req.body.missionText,
+        leadershipTitle: req.body.leadershipTitle
+    };
+    writeData('about.json', updatedAbout);
+    res.redirect('/about'); // Redirect to public page to see changes
 });
 
 // --- EVENTS MANAGEMENT ---

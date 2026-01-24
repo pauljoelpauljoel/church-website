@@ -37,7 +37,9 @@ router.get('/', (req, res) => {
 
 // About Page
 router.get('/about', (req, res) => {
-    res.render('about', { title: 'About Us' });
+    const aboutData = readData('about.json', req);
+    const teamData = readData('team.json', req);
+    res.render('about', { title: 'About Us', about: aboutData, team: teamData });
 });
 
 // Services Page

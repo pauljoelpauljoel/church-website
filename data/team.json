@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "name": "Rev. Dr. John Doe",
+    "role": "Senior Pastor",
+    "image": "/uploads/team/1769239863845-239469384.jpg",
+    "quote": "Leading with love and guided by the Spirit."
+  },
+  {
+    "id": 2,
+    "name": "Pastor Sarah Smith",
+    "role": "Associate Pastor",
+    "image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop",
+    "quote": "Passionate about youth and community outreach."
+  }
+]
