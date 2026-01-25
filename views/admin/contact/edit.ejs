@@ -42,9 +42,19 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Google Map Embed URL (src link)</label>
+                                <label class="form-label">Embed a map HTML src from Google Maps</label>
                                 <textarea class="form-control" name="mapUrl" rows="3"
                                     required><%= contact.mapUrl %></textarea>
+                                <small class="text-muted">Go to Google Maps -> Share -> Embed a map -> Copy HTML ->
+                                    Extract the src="..." URL.</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Direct Google Maps Link (for Directions)</label>
+                                <input type="text" class="form-control" name="mapLink"
+                                    value="<%= contact.mapLink || '' %>" placeholder="https://maps.app.goo.gl/..."
+                                    required>
+                                <small class="text-muted">Use the "Share" link from Google Maps (Browser URL).</small>
                             </div>
 
                             <div class="d-grid gap-2">

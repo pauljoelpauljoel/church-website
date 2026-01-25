@@ -124,6 +124,14 @@
                             <i class="fas fa-phone-alt me-2"></i>
                             <%= t.call_us %>
                         </a>
+
+                        <% if(contact.mapLink) { %>
+                            <a href="<%= contact.mapLink %>" target="_blank"
+                                class="btn btn-outline-dark w-100 py-2 fw-bold mt-2">
+                                <i class="fas fa-directions me-2"></i>
+                                <%= t.get_directions %>
+                            </a>
+                            <% } %>
                     </div>
                 </div>
             </div>

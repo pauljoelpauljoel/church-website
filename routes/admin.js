@@ -238,7 +238,8 @@ router.post('/contact', requireLogin, (req, res) => {
         email: req.body.email,
         officeHours: req.body.officeHours,
         whatsappPhone: req.body.whatsappPhone,
-        mapUrl: req.body.mapUrl
+        mapUrl: req.body.mapUrl,
+        mapLink: req.body.mapLink
     };
     writeData('contact.json', updatedContact);
     res.redirect('/contact');
