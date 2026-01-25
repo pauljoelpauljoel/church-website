@@ -175,6 +175,42 @@ router.get('/prayers', requireLogin, (req, res) => {
     res.render('admin/prayers', { title: 'Prayer Requests', prayers });
 });
 
+// Edit Prayer Form
+router.get('/prayers/:id/edit', requireLogin, (req, res) => {
+    const prayers = readData('prayers.json');
+    const prayer = prayers.find(p => p.id == req.params.id);
+    if (!prayer) return res.redirect('/admin/prayers');
+    res.render('admin/prayers_edit', { title: 'Edit Prayer Request', prayer });
+});
+
+// Update Prayer
+router.put('/prayers/:id', requireLogin, (req, res) => {
+    let prayers = readData('prayers.json');
+    const index = prayers.findIndex(p => p.id == req.params.id);
+
+    if (index !== -1) {
+        prayers[index] = {
+            ...prayers[index],
+            name: req.body.name,
+            message: req.body.message,
+            confidential: req.body.confidential === 'on',
+            // Preserve date and prayedCount or allow editing date? 
+            // Usually date is fixed, but let's allow editing if needed or just keep it.
+            // Let's keep date and counts as is unless specific requirement.
+        };
+        writeData('prayers.json', prayers);
+    }
+    res.redirect('/admin/prayers');
+});
+
+// Delete Prayer
+router.delete('/prayers/:id', requireLogin, (req, res) => {
+    let prayers = readData('prayers.json');
+    prayers = prayers.filter(p => p.id != req.params.id);
+    writeData('prayers.json', prayers);
+    res.redirect('/admin/prayers');
+});
+
 const uploadQr = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {

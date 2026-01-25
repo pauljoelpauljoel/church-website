@@ -1,0 +1,220 @@
+<%- include('partials/header') %>
+
+    <style>
+        .prayer-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #eee;
+        }
+
+        .prayer-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .prayed-active {
+            background-color: #e8f5e9;
+            /* Light green */
+            border-color: #c8e6c9;
+        }
+
+        .prayed-btn.active {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .prayer-count {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .scrollable-prayers {
+            max-height: 80vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Custom Scrollbar */
+        .scrollable-prayers::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable-prayers::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .scrollable-prayers::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .scrollable-prayers::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .sticky-top {
+                position: static !important;
+                z-index: 0 !important;
+            }
+
+            .scrollable-prayers {
+                max-height: none !important;
+                overflow-y: visible !important;
+                padding-right: 0;
+            }
+
+            .prayer-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+
+    <div class="container py-5">
+        <div class="row g-3 g-md-5">
+            <!-- Post Prayer Section -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 sticky-top" style="top: 100px; z-index: 1;">
+                    <div class="card-body p-4">
+                        <h3 class="card-title mb-4"><i class="fas fa-praying-hands text-primary me-2"></i>
+                            <%= t.post_prayer %>
+                        </h3>
+                        <form action="/prayer" method="POST">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">
+                                    <%= t.your_name %>
+                                </label>
+                                <input type="text" class="form-control" id="name" name="name" required
+                                    placeholder="<%= t.your_name %>">
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">
+                                    <%= t.your_request %>
+                                </label>
+                                <textarea class="form-control" id="message" name="message" rows="5" required
+                                    placeholder="<%= t.your_request %>..."></textarea>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="confidential" name="confidential">
+                                <label class="form-check-label text-muted" for="confidential">
+                                    <%= t.confidential_label %>
+                                </label>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <%= t.submit_request %>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Prayers Section -->
+            <div class="col-md-8">
+                <h3 class="mb-4">
+                    <%= t.prayer_wall %> <span class="badge bg-secondary rounded-pill fs-6 align-middle ms-2">
+                            <%= prayers.length %>
+                        </span>
+                </h3>
+
+                <div class="scrollable-prayers">
+                    <% if(prayers.length> 0) { %>
+                        <% prayers.forEach(p=> { %>
+                            <div class="card prayer-card mb-3" id="card-<%= p.id %>">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title fw-bold text-dark mb-0">
+                                            <%= p.name %>
+                                        </h5>
+                                        <small class="text-muted">
+                                            <%= new Date(p.date).toLocaleDateString() %>
+                                        </small>
+                                    </div>
+                                    <p class="card-text text-secondary mb-3">
+                                        <%= p.message %>
+                                    </p>
+
+                                    <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                                        <button onclick="markPrayed('<%= p.id %>')"
+                                            class="btn btn-outline-primary btn-sm rounded-pill px-3 prayed-btn"
+                                            id="btn-<%= p.id %>">
+                                            <i class="fas fa-heart me-1"></i>
+                                            <%= t.i_prayed %>
+                                        </button>
+                                        <span class="prayer-count small">
+                                            <i class="fas fa-users me-1"></i> <span id="count-<%= p.id %>">
+                                                <%= p.prayedCount || 0 %>
+                                            </span>
+                                            <%= t.praying_count %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <div class="alert alert-info text-center py-4">
+                                        <i class="fas fa-info-circle fa-2x mb-3 d-block"></i>
+                                        <%= t.no_prayers %>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const TXT_YOU_PRAYED = "<%= t.you_prayed %>";
+
+        async function markPrayed(id) {
+            const btn = document.getElementById(`btn-${id}`);
+            const card = document.getElementById(`card-${id}`);
+            const countSpan = document.getElementById(`count-${id}`);
+            const isAlreadyPrayed = btn.classList.contains('active');
+
+            try {
+                // Determine action and URL
+                const url = isAlreadyPrayed ? `/api/pray/${id}?action=undo` : `/api/pray/${id}`;
+
+                const response = await fetch(url, { method: 'POST' });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update UI
+                    countSpan.innerText = data.newCount;
+
+                    if (isAlreadyPrayed) {
+                        // Revert to initial state
+                        btn.classList.remove('active');
+                        btn.innerHTML = `<i class="fas fa-heart me-1"></i> <%= t.i_prayed %>`; // Use localized initial text
+                        card.classList.remove('prayed-active');
+                        localStorage.removeItem(`prayed_${id}`);
+                    } else {
+                        // Set to prayed state
+                        btn.classList.add('active');
+                        btn.innerHTML = `<i class="fas fa-check me-1"></i> ${TXT_YOU_PRAYED}`;
+                        card.classList.add('prayed-active');
+                        localStorage.setItem(`prayed_${id}`, 'true');
+                    }
+                }
+            } catch (error) {
+                console.error('Error marking/unmarking prayer:', error);
+            }
+        }
+
+        // On load, check localStorage to set active states
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.prayed-btn');
+            buttons.forEach(btn => {
+                const id = btn.id.split('-')[1];
+                if (localStorage.getItem(`prayed_${id}`) === 'true') {
+                    btn.classList.add('active');
+                    btn.innerHTML = `<i class="fas fa-check me-1"></i> ${TXT_YOU_PRAYED}`;
+                    document.getElementById(`card-${id}`).classList.add('prayed-active');
+                }
+            });
+        });
+    </script>
+
+    <%- include('partials/footer') %>

@@ -1,0 +1,182 @@
+<%- include('../partials/header') %>
+
+    <style>
+        .prayer-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #eee;
+        }
+
+        .prayer-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .prayed-active {
+            background-color: #e8f5e9;
+            /* Light green */
+            border-color: #c8e6c9;
+        }
+
+        .prayed-btn.active {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .prayer-count {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .scrollable-prayers {
+            max-height: 80vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Custom Scrollbar */
+        .scrollable-prayers::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable-prayers::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .scrollable-prayers::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .scrollable-prayers::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+
+    <div class="container py-5">
+        <div class="row g-5">
+            <!-- Post Prayer Section -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 sticky-top" style="top: 100px; z-index: 1;">
+                    <div class="card-body p-4">
+                        <h3 class="card-title mb-4"><i class="fas fa-praying-hands text-primary me-2"></i>Post a Prayer
+                        </h3>
+                        <form action="/prayer" method="POST">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name / பெயர்</label>
+                                <input type="text" class="form-control" id="name" name="name" required
+                                    placeholder="Your Name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Prayer Request / ஜெப குறிப்பு</label>
+                                <textarea class="form-control" id="message" name="message" rows="5" required
+                                    placeholder="Share your prayer request..."></textarea>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="confidential" name="confidential">
+                                <label class="form-check-label text-muted" for="confidential">
+                                    Keep this Confidential (Only Admin sees it)
+                                </label>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Submit Request</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Prayers Section -->
+            <div class="col-md-8">
+                <h3 class="mb-4">Prayer Wall <span class="badge bg-secondary rounded-pill fs-6 align-middle ms-2">
+                        <%= prayers.length %>
+                    </span></h3>
+
+                <div class="scrollable-prayers">
+                    <% if(prayers.length> 0) { %>
+                        <% prayers.forEach(p=> { %>
+                            <div class="card prayer-card mb-3" id="card-<%= p.id %>">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title fw-bold text-dark mb-0">
+                                            <%= p.name %>
+                                        </h5>
+                                        <small class="text-muted">
+                                            <%= new Date(p.date).toLocaleDateString() %>
+                                        </small>
+                                    </div>
+                                    <p class="card-text text-secondary mb-3">
+                                        <%= p.message %>
+                                    </p>
+
+                                    <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                                        <button onclick="markPrayed('<%= p.id %>')"
+                                            class="btn btn-outline-primary btn-sm rounded-pill px-3 prayed-btn"
+                                            id="btn-<%= p.id %>">
+                                            <i class="fas fa-heart me-1"></i> I Prayed for this
+                                        </button>
+                                        <span class="prayer-count small">
+                                            <i class="fas fa-users me-1"></i> <span id="count-<%= p.id %>">
+                                                <%= p.prayedCount || 0 %>
+                                            </span> praying
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <div class="alert alert-info text-center py-4">
+                                        <i class="fas fa-info-circle fa-2x mb-3 d-block"></i>
+                                        No public prayer requests yet. Be the first to share!
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function markPrayed(id) {
+            const btn = document.getElementById(`btn-${id}`);
+            const card = document.getElementById(`card-${id}`);
+            const countSpan = document.getElementById(`count-${id}`);
+
+            // Prevent multiple clicks per session if we wanted to enforce it strict, 
+            // but for now just visual toggle + API call
+
+            if (btn.classList.contains('active')) return; // Already clicked
+
+            try {
+                const response = await fetch(`/api/pray/${id}`, { method: 'POST' });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update UI
+                    countSpan.innerText = data.newCount;
+                    btn.classList.add('active');
+                    btn.innerHTML = '<i class="fas fa-check me-1"></i> You Prayed';
+                    card.classList.add('prayed-active');
+
+                    // Optional: Store in localStorage to remember 'I' prayed
+                    localStorage.setItem(`prayed_${id}`, 'true');
+                }
+            } catch (error) {
+                console.error('Error marking prayer:', error);
+            }
+        }
+
+        // On load, check localStorage to set active states
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.prayed-btn');
+            buttons.forEach(btn => {
+                const id = btn.id.split('-')[1];
+                if (localStorage.getItem(`prayed_${id}`) === 'true') {
+                    btn.classList.add('active');
+                    btn.innerHTML = '<i class="fas fa-check me-1"></i> You Prayed';
+                    document.getElementById(`card-${id}`).classList.add('prayed-active');
+                }
+            });
+        });
+    </script>
+
+    <%- include('../partials/footer') %>

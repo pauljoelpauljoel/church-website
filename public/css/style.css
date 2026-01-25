@@ -187,17 +187,7 @@ h2.section-title {
     padding-bottom: 10px;
 }
 
-h1.page-title::after,
-h2.section-title::after {
-    content: '';
-    position: absolute;
-    width: 60px;
-    height: 4px;
-    background: var(--secondary-color);
-    bottom: 0;
-    left: 0;
-    border-radius: 2px;
-}
+/* Lines removed to delete red underline */
 
 /* Buttons */
 .btn-primary {

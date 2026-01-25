@@ -65,5 +65,16 @@
     "search_placeholder": "Search sermons by topic or date...",
     "search_btn": "Search",
     "watch_video": "Watch Video",
-    "listen_audio": "Listen Audio"
+    "listen_audio": "Listen Audio",
+    "prayer_requests": "Prayer Requests",
+    "prayer_wall": "Prayer Wall",
+    "post_prayer": "Post a Prayer",
+    "your_name": "Your Name",
+    "your_request": "Prayer Request",
+    "confidential_label": "Confidential (Visible only to Pastor J.Franklin)",
+    "submit_request": "Submit Request",
+    "i_prayed": "I Prayed for this",
+    "you_prayed": "You Prayed",
+    "praying_count": "praying",
+    "no_prayers": "No public prayer requests yet. Be the first to share!"
 }

@@ -13,6 +13,7 @@
                         <th>Message</th>
                         <th>Type</th>
                         <th>Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,6 +38,19 @@
                                 </td>
                                 <td>
                                     <%= new Date(p.date).toLocaleDateString() %>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a href="/admin/prayers/<%= p.id %>/edit" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <form action="/admin/prayers/<%= p.id %>?_method=DELETE" method="POST"
+                                            onsubmit="return confirm('Are you sure?');">
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             <% }) %>

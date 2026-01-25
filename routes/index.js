@@ -86,26 +86,69 @@ router.get('/donate', (req, res) => {
 });
 
 // Prayer Request (POST)
+// Prayers Page (Public Prayer Wall)
+router.get('/prayers', (req, res) => {
+    try {
+        const prayers = readData('prayers.json', req).filter(p => !p.confidential);
+        // Sort by newest first
+        prayers.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        const title = req.session.lang === 'ta' ? 'ஜெப விண்ணப்பங்கள்' : 'Prayer Requests';
+        res.render('prayers', { title, prayers });
+    } catch (e) {
+        console.error("Error in /prayers:", e);
+        res.status(500).send("Error: " + e.message);
+    }
+});
+
+// Prayer Request (POST)
 router.post('/prayer', (req, res) => {
     const { name, message, confidential } = req.body;
     const prayers = readData('prayers.json', req);
 
     // Simple ID generation
     const newPrayer = {
-        id: prayers.length + 1,
+        id: Date.now(), // Use timestamp for unique ID
         name,
         message,
         confidential: confidential === 'on',
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        prayedCount: 0 // Initialize count
     };
 
     prayers.push(newPrayer);
 
     fs.writeFileSync(path.join(__dirname, '../data', 'prayers.json'), JSON.stringify(prayers, null, 2));
 
-    // Redirect back or to a thank you page
-    // For now, redirect to home with success (in query for simplicity or just redirect)
-    res.redirect('/?prayer=success');
+    // Redirect back to the prayers page
+    res.redirect('/prayers');
+});
+
+// API endpoint to increment/decrement prayer count
+router.post('/api/pray/:id', (req, res) => {
+    const prayers = readData('prayers.json', req);
+    const id = parseInt(req.params.id);
+    const prayerIndex = prayers.findIndex(p => p.id === id);
+    const action = req.query.action;
+
+    if (prayerIndex !== -1) {
+        if (!prayers[prayerIndex].prayedCount) {
+            prayers[prayerIndex].prayedCount = 0;
+        }
+
+        if (action === 'undo') {
+            if (prayers[prayerIndex].prayedCount > 0) {
+                prayers[prayerIndex].prayedCount -= 1;
+            }
+        } else {
+            prayers[prayerIndex].prayedCount += 1;
+        }
+
+        fs.writeFileSync(path.join(__dirname, '../data', 'prayers.json'), JSON.stringify(prayers, null, 2));
+        return res.json({ success: true, newCount: prayers[prayerIndex].prayedCount });
+    }
+
+    return res.status(404).json({ success: false, message: 'Prayer not found' });
 });
 
 module.exports = router;
