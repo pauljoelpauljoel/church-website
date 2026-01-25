@@ -37,43 +37,52 @@ router.get('/', (req, res) => {
 
 // About Page
 router.get('/about', (req, res) => {
-    const aboutData = readData('about.json', req);
-    const teamData = readData('team.json', req);
-    res.render('about', { title: 'About Us', about: aboutData, team: teamData });
+    const about = readData('about.json', req);
+    const team = readData('team.json', req);
+    const title = req.session.lang === 'ta' ? 'எங்களைப் பற்றி' : 'About Us';
+    res.render('about', { title, about, team });
 });
 
 // Services Page
 router.get('/services', (req, res) => {
     const services = readData('services.json', req);
-    res.render('services', { title: 'Service Schedule', services });
+    const title = req.session.lang === 'ta' ? 'ஆராதனை நேரங்கள்' : 'Service Times';
+    res.render('services', { title, services });
 });
 
 // Events Page
 router.get('/events', (req, res) => {
     const events = readData('events.json', req);
-    res.render('events', { title: 'Upcoming Events', events });
+    const title = req.session.lang === 'ta' ? 'நிகழ்வுகள்' : 'Events';
+    res.render('events', { title, events });
 });
 
 // Sermons Page
 router.get('/sermons', (req, res) => {
     const sermons = readData('sermons.json', req);
-    res.render('sermons', { title: 'Sermons & Messages', sermons });
+    const title = req.session.lang === 'ta' ? 'திருச்சபை பிரசங்கங்கள்' : 'Sermons';
+    res.render('sermons', { title, sermons });
 });
 
 // Gallery Page
 router.get('/gallery', (req, res) => {
     const gallery = readData('gallery.json', req);
-    res.render('gallery', { title: 'Photo Gallery', gallery });
+    const title = req.session.lang === 'ta' ? 'புகைப்படங்கள்' : 'Gallery';
+    res.render('gallery', { title, gallery });
 });
 
 // Contact Page
 router.get('/contact', (req, res) => {
-    res.render('contact', { title: 'Contact Us' });
+    const contact = readData('contact.json', req);
+    const title = req.session.lang === 'ta' ? 'தொடர்பு கொள்ள' : 'Contact Us';
+    res.render('contact', { title, contact });
 });
 
 // Donate Page
 router.get('/donate', (req, res) => {
-    res.render('donate', { title: 'Donate' });
+    const donate = readData('donate.json', req);
+    const title = req.session.lang === 'ta' ? 'நன்கொடை' : 'Donate';
+    res.render('donate', { title, donate });
 });
 
 // Prayer Request (POST)

@@ -258,8 +258,17 @@ h2.section-title::after {
     }
 
     .hero-title {
-        font-size: 2.2rem;
+        font-size: 2rem;
         /* Significantly smaller */
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        padding: 0 10px;
+    }
+
+    @media (max-width: 480px) {
+        .hero-title {
+            font-size: 1.5rem;
+        }
     }
 
     .hero-quote {
@@ -293,7 +302,9 @@ h2.section-title::after {
     .card {
         margin-bottom: 1.5rem;
     }
-}/* Back to Home Floating Button */
+}
+
+/* Back to Home Floating Button */
 .btn-back-home {
     position: fixed;
     bottom: 30px;

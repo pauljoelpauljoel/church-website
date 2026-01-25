@@ -175,6 +175,75 @@ router.get('/prayers', requireLogin, (req, res) => {
     res.render('admin/prayers', { title: 'Prayer Requests', prayers });
 });
 
+const uploadQr = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            const dir = path.join(__dirname, '../public/uploads/qr');
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
+            }
+            cb(null, dir);
+        },
+        filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            cb(null, uniqueSuffix + path.extname(file.originalname));
+        }
+    })
+});
+
+// --- DONATE MANAGEMENT ---
+
+// Edit Donate Info
+router.get('/donate', requireLogin, (req, res) => {
+    const donate = readData('donate.json');
+    res.render('admin/donate/edit', { title: 'Edit Donation Info', donate });
+});
+
+// Update Donate Info
+router.post('/donate', requireLogin, uploadQr.single('qrImage'), (req, res) => {
+    let donate = readData('donate.json');
+
+    let qrUrl = donate.upiQr;
+    if (req.file) {
+        qrUrl = '/uploads/qr/' + req.file.filename;
+    } else if (req.body.upiQr) {
+        qrUrl = req.body.upiQr;
+    }
+
+    const updatedDonate = {
+        bankName: req.body.bankName,
+        accNo: req.body.accNo,
+        ifsc: req.body.ifsc,
+        branch: req.body.branch,
+        upiId: req.body.upiId,
+        upiQr: qrUrl
+    };
+    writeData('donate.json', updatedDonate);
+    res.redirect('/donate');
+});
+
+// --- CONTACT MANAGEMENT ---
+
+// Edit Contact Info
+router.get('/contact', requireLogin, (req, res) => {
+    const contact = readData('contact.json');
+    res.render('admin/contact/edit', { title: 'Edit Contact Info', contact });
+});
+
+// Update Contact Info
+router.post('/contact', requireLogin, (req, res) => {
+    const updatedContact = {
+        address: req.body.address,
+        phone: req.body.phone,
+        email: req.body.email,
+        officeHours: req.body.officeHours,
+        whatsappPhone: req.body.whatsappPhone,
+        mapUrl: req.body.mapUrl
+    };
+    writeData('contact.json', updatedContact);
+    res.redirect('/contact');
+});
+
 // --- ABOUT MANAGEMENT ---
 
 // Edit About Content
