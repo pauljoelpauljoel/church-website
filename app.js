@@ -29,6 +29,7 @@ app.use((req, res, next) => {
     const langFile = require(`./locales/${lang}.json`);
     res.locals.t = langFile;
     res.locals.currentLang = lang;
+    res.locals.currentPath = req.path;
 
     next();
 });

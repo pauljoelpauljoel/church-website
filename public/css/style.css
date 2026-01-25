@@ -45,6 +45,15 @@ h6,
     font-weight: 700;
     font-size: 1.8rem;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 90px;
+    width: auto;
+    transition: height 0.3s ease;
 }
 
 .nav-link {
@@ -261,6 +270,11 @@ h2.section-title::after {
         font-size: 1.4rem;
     }
 
+    .logo-img {
+        height: 60px;
+        /* Smaller size for mobile */
+    }
+
     .nav-link {
         margin: 5px 0;
         /* Add vertical spacing in mobile menu */
@@ -278,5 +292,50 @@ h2.section-title::after {
     /* Adjust cards */
     .card {
         margin-bottom: 1.5rem;
+    }
+}/* Back to Home Floating Button */
+.btn-back-home {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 1000;
+    background: var(--gradient-primary);
+    color: white !important;
+    padding: 12px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-back-home:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: var(--shadow-lg);
+    background: var(--secondary-color);
+}
+
+.btn-back-home i {
+    font-size: 1.2rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .btn-back-home {
+        bottom: 20px;
+        left: 20px;
+        padding: 12px;
+        border-radius: 50%;
+        /* Circle on mobile */
+        width: 50px;
+        height: 50px;
+        justify-content: center;
+    }
+
+    .btn-back-home span {
+        display: none !important;
+        /* Force hide text on small screens */
     }
 }
