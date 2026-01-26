@@ -8,29 +8,34 @@
                         <h3 class="mb-0">Edit Event</h3>
                     </div>
                     <div class="card-body p-4">
-                        <form action="/admin/events/<%= event.id %>?_method=PUT" method="POST">
+                        <form action="/admin/events/<%= event.id %>?_method=PUT" method="POST"
+                            enctype="multipart/form-data">
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Event Title</label>
-                                <input type="text" name="title" class="form-control" value="<%= event.title %>"
+                                <label class="form-label">Event Title</label>
+                                <input type="text" class="form-control" name="title" value="<%= event.title %>"
                                     required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Date</label>
-                                <input type="date" name="date" class="form-control" value="<%= event.date %>" required>
+                                <label class="form-label">Date</label>
+                                <input type="text" class="form-control" name="date" value="<%= event.date %>" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Image URL</label>
-                                <input type="url" name="image" class="form-control" value="<%= event.image %>" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Description</label>
-                                <textarea name="description" class="form-control" rows="5"
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" name="description" rows="3"
                                     required><%= event.description %></textarea>
                             </div>
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-warning btn-lg">Update Event</button>
-                                <a href="/admin/events" class="btn btn-secondary">Cancel</a>
+                            <div class="mb-3">
+                                <label class="form-label">Event Image</label>
+                                <% if(event.image) { %>
+                                    <div class="mb-2">
+                                        <img src="<%= event.image %>" alt="Current Image" style="height: 100px;">
+                                    </div>
+                                    <% } %>
+                                        <input type="file" class="form-control" name="image" accept="image/*">
+                                        <small class="text-muted">Leave blank to keep current image.</small>
                             </div>
+                            <button type="submit" class="btn btn-warning">Update Event</button>
+                            <a href="/admin/events" class="btn btn-secondary">Cancel</a>
                         </form>
                     </div>
                 </div>

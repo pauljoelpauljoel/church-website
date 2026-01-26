@@ -1,9 +1,9 @@
 {
   "address": "123 Church Road, City Name, State, India - 600001",
-  "phone": "+91 9566980426",
+  "phone": "9566980426",
   "email": "contact@indianchurch.com",
   "officeHours": "Mon - Sat: 9:00 AM - 5:00 PM",
   "whatsappPhone": "919566980426",
-  "mapUrl": "https://maps.google.com/maps?q=11.129099,77.825525&z=15&output=embed",
-  "mapLink": "https://www.google.com/maps/place/11%C2%B007'43.3%22N+77%C2%B049'29.8%22E/@11.128692,77.8223741,17z/data=!3m1!4b1!4m4!3m3!8m2!3d11.128692!4d77.824949?entry=ttu&g_ep=EgoyMDI2MDEyMS4wIKXMDSoKLDEwMDc5MjA3M0gBUAM%3D"
+  "mapUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3912.9005930598696!2d77.73066257481248!3d11.26871728891157!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba96fa1bc96562f%3A0x64a698c64c950155!2sArasu%20perundu%20nagar!5e0!3m2!1sen!2sin!4v1769403464387!5m2!1sen!2sin",
+  "mapLink": "https://maps.app.goo.gl/DqanSbJg7PeJvy3Q9"
 }

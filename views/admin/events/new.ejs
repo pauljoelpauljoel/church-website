@@ -8,29 +8,27 @@
                         <h3 class="mb-0">Add New Event</h3>
                     </div>
                     <div class="card-body p-4">
-                        <form action="/admin/events" method="POST">
+                        <form action="/admin/events" method="POST" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Event Title</label>
-                                <input type="text" name="title" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Date</label>
-                                <input type="date" name="date" class="form-control" required>
+                                <label class="form-label">Event Title</label>
+                                <input type="text" class="form-control" name="title" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Image URL</label>
-                                <input type="url" name="image" class="form-control"
-                                    placeholder="https://images.unsplash.com/..." required>
-                                <div class="form-text">Paste a URL from Unsplash or other image hosts.</div>
+                                <label class="form-label">Date</label>
+                                <input type="text" class="form-control" name="date" placeholder="e.g. June 15, 2026"
+                                    required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Description</label>
-                                <textarea name="description" class="form-control" rows="5" required></textarea>
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" name="description" rows="3" required></textarea>
                             </div>
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-success btn-lg">Create Event</button>
-                                <a href="/admin/events" class="btn btn-secondary">Cancel</a>
+                            <div class="mb-3">
+                                <label class="form-label">Event Image</label>
+                                <input type="file" class="form-control" name="image" accept="image/*">
+                                <small class="text-muted">Upload an image (optional).</small>
                             </div>
+                            <button type="submit" class="btn btn-success">Create Event</button>
+                            <a href="/admin/events" class="btn btn-secondary">Cancel</a>
                         </form>
                     </div>
                 </div>

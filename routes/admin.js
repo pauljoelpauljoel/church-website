@@ -144,14 +144,62 @@ router.get('/login', (req, res) => {
 });
 
 // Login Logic
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    // Hardcoded credentials for demo
-    if (username === 'admin' && password === 'church123') {
+
+    // Fetch dynamic credentials
+    const { getAdminSettings } = require('../utils/storage');
+    const settings = await getAdminSettings();
+
+    if (username === settings.username && password === settings.password) {
         req.session.user_id = 'admin';
         res.redirect('/admin/dashboard');
     } else {
         res.render('admin/login', { title: 'Admin Login', error: 'Invalid Credentials' });
+    }
+});
+
+// Settings Page
+router.get('/settings', requireLogin, (req, res) => {
+    res.render('admin/settings', { title: 'Admin Settings', error: null, success: null });
+});
+
+// Update Settings
+router.post('/settings', requireLogin, async (req, res) => {
+    const { currentUsername, currentPassword, newUsername, newPassword } = req.body;
+    const { getAdminSettings, saveAdminSettings } = require('../utils/storage');
+
+    // Verify current credentials first
+    const settings = await getAdminSettings();
+
+    if (currentUsername !== settings.username || currentPassword !== settings.password) {
+        return res.render('admin/settings', {
+            title: 'Admin Settings',
+            error: 'Current credentials incorrect',
+            success: null
+        });
+    }
+
+    // Save new credentials
+    const newSettings = {
+        username: newUsername,
+        password: newPassword
+    };
+
+    const success = await saveAdminSettings(newSettings);
+
+    if (success) {
+        res.render('admin/settings', {
+            title: 'Admin Settings',
+            error: null,
+            success: 'Credentials updated successfully. Please login with new details next time.'
+        });
+    } else {
+        res.render('admin/settings', {
+            title: 'Admin Settings',
+            error: 'Failed to save settings. Please try again.',
+            success: null
+        });
     }
 });
 
@@ -162,30 +210,39 @@ router.get('/logout', (req, res) => {
 });
 
 // Dashboard
-router.get('/dashboard', requireLogin, (req, res) => {
-    const prayerCount = readData('prayers.json').length;
+router.get('/dashboard', requireLogin, async (req, res) => {
+    const { getPrayers } = require('../utils/storage');
+    const prayers = await getPrayers();
+    const prayerCount = prayers.length;
+
+    // For other counts, we can still use sync readData as they are local files
+    // But we need to make sure readData is accessible here. 
+    // It is defined in line 55 of admin.js
     const eventCount = readData('events.json').length;
     const sermonCount = readData('sermons.json').length;
     res.render('admin/dashboard', { title: 'Admin Dashboard', prayerCount, eventCount, sermonCount });
 });
 
 // View Prayer Requests
-router.get('/prayers', requireLogin, (req, res) => {
-    const prayers = readData('prayers.json');
+router.get('/prayers', requireLogin, async (req, res) => {
+    const { getPrayers } = require('../utils/storage');
+    const prayers = await getPrayers();
     res.render('admin/prayers', { title: 'Prayer Requests', prayers });
 });
 
 // Edit Prayer Form
-router.get('/prayers/:id/edit', requireLogin, (req, res) => {
-    const prayers = readData('prayers.json');
+router.get('/prayers/:id/edit', requireLogin, async (req, res) => {
+    const { getPrayers } = require('../utils/storage');
+    const prayers = await getPrayers();
     const prayer = prayers.find(p => p.id == req.params.id);
     if (!prayer) return res.redirect('/admin/prayers');
     res.render('admin/prayers_edit', { title: 'Edit Prayer Request', prayer });
 });
 
 // Update Prayer
-router.put('/prayers/:id', requireLogin, (req, res) => {
-    let prayers = readData('prayers.json');
+router.put('/prayers/:id', requireLogin, async (req, res) => {
+    const { getPrayers, savePrayers } = require('../utils/storage');
+    let prayers = await getPrayers();
     const index = prayers.findIndex(p => p.id == req.params.id);
 
     if (index !== -1) {
@@ -194,20 +251,19 @@ router.put('/prayers/:id', requireLogin, (req, res) => {
             name: req.body.name,
             message: req.body.message,
             confidential: req.body.confidential === 'on',
-            // Preserve date and prayedCount or allow editing date? 
-            // Usually date is fixed, but let's allow editing if needed or just keep it.
-            // Let's keep date and counts as is unless specific requirement.
+            // Preserve date and prayedCount
         };
-        writeData('prayers.json', prayers);
+        await savePrayers(prayers);
     }
     res.redirect('/admin/prayers');
 });
 
 // Delete Prayer
-router.delete('/prayers/:id', requireLogin, (req, res) => {
-    let prayers = readData('prayers.json');
+router.delete('/prayers/:id', requireLogin, async (req, res) => {
+    const { getPrayers, savePrayers } = require('../utils/storage');
+    let prayers = await getPrayers();
     prayers = prayers.filter(p => p.id != req.params.id);
-    writeData('prayers.json', prayers);
+    await savePrayers(prayers);
     res.redirect('/admin/prayers');
 });
 
@@ -266,43 +322,67 @@ router.get('/contact', requireLogin, (req, res) => {
     res.render('admin/contact/edit', { title: 'Edit Contact Info', contact });
 });
 
+
+const uploadEvents = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            const dir = path.join(__dirname, '../public/uploads/events');
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
+            }
+            cb(null, dir);
+        },
+        filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            cb(null, uniqueSuffix + path.extname(file.originalname));
+        }
+    })
+});
+
+// ... (keep existing codes)
+
 // Update Contact Info
 router.post('/contact', requireLogin, (req, res) => {
+    let mapUrl = req.body.mapUrl;
+
+    // Smart Parsing for Map URL (Embed)
+    // If user pastes full iframe code <iframe src="...">
+    const iframeMatch = mapUrl.match(/src="([^"]+)"/);
+    if (iframeMatch && iframeMatch[1]) {
+        mapUrl = iframeMatch[1];
+    }
+
+    // Optional: If user pastes "Share Link" into mapLink, we keep it as is.
+    // The user wants "Share Link" to populate "Both".
+    // If mapUrl LOOKS like a share link (maps.app.goo.gl), we can't easily turn it into embed without API.
+    // So we just handle the iframe paste case which is the most common user error.
+
+    // Auto-fix WhatsApp number (default to India +91 if only 10 digits provided)
+    let whatsappPhone = req.body.whatsappPhone.trim();
+    if (/^\d{10}$/.test(whatsappPhone)) {
+        whatsappPhone = '91' + whatsappPhone;
+    }
+
+    // Auto-fix General Phone number (default to India +91)
+    let phone = req.body.phone.trim();
+    if (/^\d{10}$/.test(phone)) {
+        phone = '+91 ' + phone;
+    }
+
     const updatedContact = {
         address: req.body.address,
-        phone: req.body.phone,
+        phone: phone,
         email: req.body.email,
         officeHours: req.body.officeHours,
-        whatsappPhone: req.body.whatsappPhone,
-        mapUrl: req.body.mapUrl,
+        whatsappPhone: whatsappPhone,
+        mapUrl: mapUrl,
         mapLink: req.body.mapLink
     };
     writeData('contact.json', updatedContact);
     res.redirect('/contact');
 });
 
-// --- ABOUT MANAGEMENT ---
-
-// Edit About Content
-router.get('/about', requireLogin, (req, res) => {
-    const about = readData('about.json');
-    res.render('admin/about/edit', { title: 'Edit About Us', about });
-});
-
-// Update About Content
-router.post('/about', requireLogin, (req, res) => {
-    const updatedAbout = {
-        title: req.body.title,
-        lead: req.body.lead,
-        visionTitle: req.body.visionTitle,
-        visionText: req.body.visionText,
-        missionTitle: req.body.missionTitle,
-        missionText: req.body.missionText,
-        leadershipTitle: req.body.leadershipTitle
-    };
-    writeData('about.json', updatedAbout);
-    res.redirect('/about'); // Redirect to public page to see changes
-});
+// ... (Services...)
 
 // --- EVENTS MANAGEMENT ---
 
@@ -318,14 +398,22 @@ router.get('/events/new', requireLogin, (req, res) => {
 });
 
 // Create Event
-router.post('/events', requireLogin, (req, res) => {
+router.post('/events', requireLogin, uploadEvents.single('image'), (req, res) => {
     const events = readData('events.json');
+
+    let imageUrl = '';
+    if (req.file) {
+        imageUrl = '/uploads/events/' + req.file.filename;
+    } else {
+        imageUrl = 'https://source.unsplash.com/800x600/?church,event';
+    }
+
     const newEvent = {
         id: Date.now(), // Simple unique ID
         title: req.body.title,
         date: req.body.date,
         description: req.body.description,
-        image: req.body.image
+        image: imageUrl
     };
     events.push(newEvent);
     writeData('events.json', events);
@@ -341,16 +429,21 @@ router.get('/events/:id/edit', requireLogin, (req, res) => {
 });
 
 // Update Event
-router.put('/events/:id', requireLogin, (req, res) => {
+router.put('/events/:id', requireLogin, uploadEvents.single('image'), (req, res) => {
     let events = readData('events.json');
     const index = events.findIndex(e => e.id == req.params.id);
     if (index !== -1) {
+        let imageUrl = events[index].image;
+        if (req.file) {
+            imageUrl = '/uploads/events/' + req.file.filename;
+        }
+
         events[index] = {
             ...events[index],
             title: req.body.title,
             date: req.body.date,
             description: req.body.description,
-            image: req.body.image
+            image: imageUrl
         };
         writeData('events.json', events);
     }

@@ -340,3 +340,9 @@ h2.section-title {
         /* Force hide text on small screens */
     }
 }
+
+@media (min-width: 768px) {
+    .w-md-auto {
+        width: auto !important;
+    }
+}

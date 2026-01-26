@@ -86,10 +86,15 @@ router.get('/donate', (req, res) => {
 });
 
 // Prayer Request (POST)
+// Prayer Request (POST)
 // Prayers Page (Public Prayer Wall)
-router.get('/prayers', (req, res) => {
+router.get('/prayers', async (req, res) => {
     try {
-        const prayers = readData('prayers.json', req).filter(p => !p.confidential);
+        // Use external storage utility for persistence
+        const { getPrayers } = require('../utils/storage');
+        const allPrayers = await getPrayers();
+
+        const prayers = allPrayers.filter(p => !p.confidential);
         // Sort by newest first
         prayers.sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -102,53 +107,64 @@ router.get('/prayers', (req, res) => {
 });
 
 // Prayer Request (POST)
-router.post('/prayer', (req, res) => {
-    const { name, message, confidential } = req.body;
-    const prayers = readData('prayers.json', req);
+router.post('/prayer', async (req, res) => {
+    try {
+        const { getPrayers, savePrayers } = require('../utils/storage');
+        const { name, message, confidential } = req.body;
+        const prayers = await getPrayers();
 
-    // Simple ID generation
-    const newPrayer = {
-        id: Date.now(), // Use timestamp for unique ID
-        name,
-        message,
-        confidential: confidential === 'on',
-        date: new Date().toISOString(),
-        prayedCount: 0 // Initialize count
-    };
+        // Simple ID generation
+        const newPrayer = {
+            id: Date.now(), // Use timestamp for unique ID
+            name,
+            message,
+            confidential: confidential === 'on',
+            date: new Date().toISOString(),
+            prayedCount: 0 // Initialize count
+        };
 
-    prayers.push(newPrayer);
+        prayers.push(newPrayer);
+        await savePrayers(prayers);
 
-    fs.writeFileSync(path.join(__dirname, '../data', 'prayers.json'), JSON.stringify(prayers, null, 2));
-
-    // Redirect back to the prayers page
-    res.redirect('/prayers');
+        // Redirect back to the prayers page
+        res.redirect('/prayers');
+    } catch (e) {
+        console.error("Error creating prayer:", e);
+        res.redirect('/prayers');
+    }
 });
 
 // API endpoint to increment/decrement prayer count
-router.post('/api/pray/:id', (req, res) => {
-    const prayers = readData('prayers.json', req);
-    const id = parseInt(req.params.id);
-    const prayerIndex = prayers.findIndex(p => p.id === id);
-    const action = req.query.action;
+router.post('/api/pray/:id', async (req, res) => {
+    try {
+        const { getPrayers, savePrayers } = require('../utils/storage');
+        const prayers = await getPrayers();
+        const id = parseInt(req.params.id);
+        const prayerIndex = prayers.findIndex(p => p.id === id);
+        const action = req.query.action;
 
-    if (prayerIndex !== -1) {
-        if (!prayers[prayerIndex].prayedCount) {
-            prayers[prayerIndex].prayedCount = 0;
-        }
-
-        if (action === 'undo') {
-            if (prayers[prayerIndex].prayedCount > 0) {
-                prayers[prayerIndex].prayedCount -= 1;
+        if (prayerIndex !== -1) {
+            if (!prayers[prayerIndex].prayedCount) {
+                prayers[prayerIndex].prayedCount = 0;
             }
-        } else {
-            prayers[prayerIndex].prayedCount += 1;
+
+            if (action === 'undo') {
+                if (prayers[prayerIndex].prayedCount > 0) {
+                    prayers[prayerIndex].prayedCount -= 1;
+                }
+            } else {
+                prayers[prayerIndex].prayedCount += 1;
+            }
+
+            await savePrayers(prayers);
+            return res.json({ success: true, newCount: prayers[prayerIndex].prayedCount });
         }
 
-        fs.writeFileSync(path.join(__dirname, '../data', 'prayers.json'), JSON.stringify(prayers, null, 2));
-        return res.json({ success: true, newCount: prayers[prayerIndex].prayedCount });
+        return res.status(404).json({ success: false, message: 'Prayer not found' });
+    } catch (e) {
+        console.error("Error updating prayer count:", e);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
-
-    return res.status(404).json({ success: false, message: 'Prayer not found' });
 });
 
 module.exports = router;
