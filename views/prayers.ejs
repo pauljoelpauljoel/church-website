@@ -72,6 +72,27 @@
     </style>
 
     <div class="container py-5">
+        <!-- Feedback Alert -->
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            if (status === 'confidential') {
+                document.write(`
+                    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+                        <i class="fas fa-check-circle me-2"></i> ${"<%= t.prayer_sent_confidential %>"}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `);
+            } else if (status === 'public') {
+                document.write(`
+                    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+                        <i class="fas fa-check-circle me-2"></i> ${"<%= t.prayer_sent_public %>"}
+                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `);
+            }
+        </script>
+
         <div class="row g-3 g-md-5">
             <!-- Post Prayer Section -->
             <div class="col-md-4">

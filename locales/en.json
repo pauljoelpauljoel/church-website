@@ -80,5 +80,7 @@
     "i_prayed": "I Prayed for this",
     "you_prayed": "You Prayed",
     "praying_count": "praying",
-    "no_prayers": "No public prayer requests yet. Be the first to share!"
+    "no_prayers": "No public prayer requests yet. Be the first to share!",
+    "prayer_sent_confidential": "Your prayer request has been sent confidentially to the Pastor.",
+    "prayer_sent_public": "Your prayer request has been posted to the Prayer Wall."
 }

@@ -130,11 +130,12 @@ router.post('/prayer', async (req, res) => {
         prayers.push(newPrayer);
         await savePrayers(prayers);
 
-        // Redirect back to the prayers page
-        res.redirect('/prayers');
+        // Redirect back to the prayers page with status
+        const status = confidential === 'on' ? 'confidential' : 'public';
+        res.redirect(`/prayers?status=${status}`);
     } catch (e) {
         console.error("Error creating prayer:", e);
-        res.redirect('/prayers');
+        res.redirect('/prayers?status=error');
     }
 });
 
