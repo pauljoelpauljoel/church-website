@@ -17,9 +17,26 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="caption" class="form-label">Caption</label>
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="General">General</option>
+                                    <% if(typeof categories !=='undefined' && categories.length> 0) { %>
+                                        <% categories.forEach(cat=> { %>
+                                            <% if(cat.name !=='General' ) { %>
+                                                <option value="<%= cat.name %>">
+                                                    <%= cat.name %>
+                                                </option>
+                                                <% } %>
+                                                    <% }) %>
+                                                        <% } %>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="caption" class="form-label">Description (Required)</label>
                                 <input type="text" class="form-control" id="caption" name="caption"
-                                    placeholder="Short description of the photo" required>
+                                    placeholder="Describe what is happening in the photo..." required>
+                                <div class="form-text">This will be shown to viewers.</div>
                             </div>
 
                             <div class="d-grid gap-2">

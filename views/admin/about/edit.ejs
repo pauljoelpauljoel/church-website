@@ -13,12 +13,12 @@
                             <div class="mb-3">
                                 <label for="title" class="form-label">Page Title</label>
                                 <input type="text" class="form-control" id="title" name="title"
-                                    value="<%= about.title %>" required>
+                                    value="<%= about.title || '' %>" required>
                             </div>
                             <div class="mb-3">
                                 <label for="lead" class="form-label">Lead Text</label>
                                 <textarea class="form-control" id="lead" name="lead" rows="2"
-                                    required><%= about.lead %></textarea>
+                                    required><%= about.lead || '' %></textarea>
                             </div>
 
                             <hr>
@@ -27,12 +27,12 @@
                             <div class="mb-3">
                                 <label for="visionTitle" class="form-label">Vision Title</label>
                                 <input type="text" class="form-control" id="visionTitle" name="visionTitle"
-                                    value="<%= about.visionTitle %>" required>
+                                    value="<%= about.visionTitle || '' %>" required>
                             </div>
                             <div class="mb-3">
                                 <label for="visionText" class="form-label">Vision Text</label>
                                 <textarea class="form-control" id="visionText" name="visionText" rows="3"
-                                    required><%= about.visionText %></textarea>
+                                    required><%= about.visionText || '' %></textarea>
                             </div>
 
                             <hr>
@@ -41,12 +41,12 @@
                             <div class="mb-3">
                                 <label for="missionTitle" class="form-label">Mission Title</label>
                                 <input type="text" class="form-control" id="missionTitle" name="missionTitle"
-                                    value="<%= about.missionTitle %>" required>
+                                    value="<%= about.missionTitle || '' %>" required>
                             </div>
                             <div class="mb-3">
                                 <label for="missionText" class="form-label">Mission Text</label>
                                 <textarea class="form-control" id="missionText" name="missionText" rows="3"
-                                    required><%= about.missionText %></textarea>
+                                    required><%= about.missionText || '' %></textarea>
                             </div>
 
                             <hr>
@@ -55,7 +55,7 @@
                             <div class="mb-3">
                                 <label for="leadershipTitle" class="form-label">Section Title</label>
                                 <input type="text" class="form-control" id="leadershipTitle" name="leadershipTitle"
-                                    value="<%= about.leadershipTitle %>" required>
+                                    value="<%= about.leadershipTitle || '' %>" required>
                             </div>
 
                             <div class="d-grid gap-2">

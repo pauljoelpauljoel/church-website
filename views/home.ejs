@@ -70,45 +70,68 @@
         </div>
     </div>
 
-    <!-- Upcoming Events Preview -->
-    <div class="container mb-5">
-        <h2 class="section-title text-center w-100 mb-5" data-aos="fade-right">
-            <%= t.upcoming_events %>
-        </h2>
-        <div class="row">
-            <% if(events && events.length> 0) { %>
-                <% events.forEach((event, index)=> { %>
-                    <div class="col-md-4 mb-4" data-aos="flip-left" data-aos-delay="<%= index * 100 %>">
-                        <div class="card h-100">
-                            <img src="<%= event.image %>" class="card-img-top" alt="<%= event.title %>"
-                                onerror="this.src='https://source.unsplash.com/400x300/?church,event'">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <%= event.title %>
-                                </h5>
-                                <p class="text-muted small"><i class="far fa-calendar-alt me-2"></i>
-                                    <%= event.date %>
-                                </p>
-                                <p class="card-text">
-                                    <%= event.description.substring(0, 80) %>...
-                                </p>
-                                <a href="/events" class="btn btn-sm btn-outline-primary">
-                                    <%= t.read_more %>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <% }) %>
-                        <% } %>
+    <!-- Live Stream Section (Toggleable) -->
+    <% if(settings && settings.liveStreamEnabled) { %>
+        <div class="container mb-5">
+            <div class="alert alert-info shadow-sm border-0 d-flex align-items-center justify-content-center p-5 rounded-3"
+                data-aos="zoom-in" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);">
+                <div class="text-center">
+                    <i class="fab fa-youtube fa-4x text-danger mb-3"></i>
+                    <h2 class="alert-heading fw-bold text-dark">
+                        <%= (settings && settings.liveStreamTitle) ? settings.liveStreamTitle : t.join_online %>
+                    </h2>
+                    <p class="mb-4 text-dark lead">
+                        <%= (settings && settings.liveStreamText) ? settings.liveStreamText : t.online_text %>
+                    </p>
+                    <a href="<%= (settings.liveStreamLink && settings.liveStreamLink.length > 0) ? settings.liveStreamLink : '#' %>"
+                        target="_blank" class="btn btn-danger btn-lg px-5 shadow-sm rounded-pill">
+                        <i class="fas fa-play-circle me-2"></i>
+                        <%= t.watch_live %>
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
+        <% } %>
 
-    <!-- Admin Floating Button -->
-    <a href="/admin"
-        class="btn btn-dark position-fixed bottom-0 end-0 m-4 rounded-circle shadow-lg d-flex align-items-center justify-content-center"
-        style="width: 60px; height: 60px; z-index: 1000; border: 2px solid rgba(255,255,255,0.2);" title="Admin Panel"
-        data-aos="zoom-in" data-aos-delay="1000">
-        <i class="fas fa-user-shield fa-lg"></i>
-    </a>
+            <!-- Upcoming Events Preview -->
+            <div class="container mb-5">
+                <h2 class="section-title text-center w-100 mb-5" data-aos="fade-right">
+                    <%= t.upcoming_events %>
+                </h2>
+                <div class="row">
+                    <% if(events && events.length> 0) { %>
+                        <% events.forEach((event, index)=> { %>
+                            <div class="col-md-4 mb-4" data-aos="flip-left" data-aos-delay="<%= index * 100 %>">
+                                <div class="card h-100">
+                                    <img src="<%= event.image %>" class="card-img-top" alt="<%= event.title %>"
+                                        onerror="this.src='https://source.unsplash.com/400x300/?church,event'">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <%= event.title %>
+                                        </h5>
+                                        <p class="text-muted small"><i class="far fa-calendar-alt me-2"></i>
+                                            <%= event.date %>
+                                        </p>
+                                        <p class="card-text">
+                                            <%= event.description.substring(0, 80) %>...
+                                        </p>
+                                        <a href="/events" class="btn btn-sm btn-outline-primary">
+                                            <%= t.read_more %>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                                <% } %>
+                </div>
+            </div>
 
-    <%- include('partials/footer') %>
+            <!-- Admin Floating Button -->
+            <a href="/admin"
+                class="btn btn-dark position-fixed bottom-0 end-0 m-4 rounded-circle shadow-lg d-flex align-items-center justify-content-center"
+                style="width: 60px; height: 60px; z-index: 1000; border: 2px solid rgba(255,255,255,0.2);"
+                title="Admin Panel" data-aos="zoom-in" data-aos-delay="1000">
+                <i class="fas fa-user-shield fa-lg"></i>
+            </a>
+
+            <%- include('partials/footer') %>

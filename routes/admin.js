@@ -50,13 +50,44 @@ const requireLogin = (req, res, next) => {
     res.redirect('/admin/login');
 };
 
-// Helper helper
-// Helper helper
 const readData = (filename) => {
     const filePath = path.join(__dirname, '../data', filename);
     if (!fs.existsSync(filePath)) return [];
     return JSON.parse(fs.readFileSync(filePath));
 };
+
+const writeData = (filename, data) => {
+    const filePath = path.join(__dirname, '../data', filename);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+};
+
+// --- ABOUT MANAGEMENT (Moved to top) ---
+router.get('/about', requireLogin, (req, res) => {
+    let about = readData('about.json');
+    // Handle case where readData returns array or empty
+    if (Array.isArray(about) && about.length === 0) {
+        about = {};
+    }
+    res.render('admin/about/edit', { title: 'Edit About Us', about });
+});
+
+router.post('/about', requireLogin, (req, res) => {
+    const about = {
+        title: req.body.title,
+        lead: req.body.lead,
+        visionTitle: req.body.visionTitle,
+        visionText: req.body.visionText,
+        missionTitle: req.body.missionTitle,
+        missionText: req.body.missionText,
+        leadershipTitle: req.body.leadershipTitle
+    };
+    writeData('about.json', about);
+    res.redirect('/admin/about');
+});
+
+
+
+
 
 // --- TEAM MANAGEMENT ---
 
@@ -133,10 +164,7 @@ router.delete('/team/:id', requireLogin, (req, res) => {
     res.redirect('/admin/team');
 });
 
-const writeData = (filename, data) => {
-    const filePath = path.join(__dirname, '../data', filename);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-};
+
 
 // Login Page
 router.get('/login', (req, res) => {
@@ -160,11 +188,45 @@ router.post('/login', async (req, res) => {
 });
 
 // Settings Page
-router.get('/settings', requireLogin, (req, res) => {
-    res.render('admin/settings', { title: 'Admin Settings', error: null, success: null });
+router.get('/settings', requireLogin, async (req, res) => {
+    const { getAdminSettings } = require('../utils/storage');
+    const settings = await getAdminSettings();
+    res.render('admin/settings', { title: 'Admin Settings', error: null, success: null, settings });
 });
 
-// Update Settings
+// Update Site Settings
+router.post('/settings/site', requireLogin, async (req, res) => {
+    const { getAdminSettings, saveAdminSettings } = require('../utils/storage');
+    const currentSettings = await getAdminSettings();
+
+    const newSettings = {
+        ...currentSettings,
+        liveStreamEnabled: req.body.liveStreamEnabled === 'on',
+        liveStreamTitle: req.body.liveStreamTitle,
+        liveStreamText: req.body.liveStreamText,
+        liveStreamLink: req.body.liveStreamLink
+    };
+
+    const success = await saveAdminSettings(newSettings);
+
+    if (success) {
+        res.render('admin/settings', {
+            title: 'Admin Settings',
+            error: null,
+            success: 'Site settings updated successfully.',
+            settings: newSettings
+        });
+    } else {
+        res.render('admin/settings', {
+            title: 'Admin Settings',
+            error: 'Failed to update site settings.',
+            success: null,
+            settings: currentSettings
+        });
+    }
+});
+
+// Update Credentials
 router.post('/settings', requireLogin, async (req, res) => {
     const { currentUsername, currentPassword, newUsername, newPassword } = req.body;
     const { getAdminSettings, saveAdminSettings } = require('../utils/storage');
@@ -176,12 +238,14 @@ router.post('/settings', requireLogin, async (req, res) => {
         return res.render('admin/settings', {
             title: 'Admin Settings',
             error: 'Current credentials incorrect',
-            success: null
+            success: null,
+            settings
         });
     }
 
-    // Save new credentials
+    // Save new credentials (preserve other settings)
     const newSettings = {
+        ...settings, // Keep liveStream info
         username: newUsername,
         password: newPassword
     };
@@ -192,13 +256,15 @@ router.post('/settings', requireLogin, async (req, res) => {
         res.render('admin/settings', {
             title: 'Admin Settings',
             error: null,
-            success: 'Credentials updated successfully. Please login with new details next time.'
+            success: 'Credentials updated successfully. Please login with new details next time.',
+            settings: newSettings
         });
     } else {
         res.render('admin/settings', {
             title: 'Admin Settings',
             error: 'Failed to save settings. Please try again.',
-            success: null
+            success: null,
+            settings
         });
     }
 });
@@ -585,6 +651,39 @@ router.delete('/services/:id', requireLogin, (req, res) => {
     res.redirect('/admin/services');
 });
 
+
+
+// --- CATEGORY MANAGEMENT ---
+router.get('/categories', requireLogin, async (req, res) => {
+    const { getCategories } = require('../utils/storage');
+    const categories = await getCategories();
+    res.render('admin/categories/index', { title: 'Manage Categories', categories });
+});
+
+router.post('/categories', requireLogin, async (req, res) => {
+    const { getCategories, saveCategories } = require('../utils/storage');
+    const categories = await getCategories();
+    const newCategory = {
+        id: Date.now(),
+        name: req.body.name,
+        nameTa: req.body.nameTa
+    };
+    categories.push(newCategory);
+    await saveCategories(categories);
+    res.redirect('/admin/categories');
+});
+
+router.delete('/categories/:id', requireLogin, async (req, res) => {
+    const { getCategories, saveCategories } = require('../utils/storage');
+    let categories = await getCategories();
+    // Prevent deleting General category (assuming ID 1 is General)
+    if (req.params.id != 1) {
+        categories = categories.filter(c => c.id != req.params.id);
+        await saveCategories(categories);
+    }
+    res.redirect('/admin/categories');
+});
+
 // --- GALLERY MANAGEMENT ---
 
 // List Gallery
@@ -594,11 +693,12 @@ router.get('/gallery', requireLogin, (req, res) => {
 });
 
 // New Photo Form
-router.get('/gallery/new', requireLogin, (req, res) => {
-    res.render('admin/gallery/new', { title: 'Add New Photo' });
+router.get('/gallery/new', requireLogin, async (req, res) => {
+    const { getCategories } = require('../utils/storage');
+    const categories = await getCategories();
+    res.render('admin/gallery/new', { title: 'Add New Photo', categories });
 });
 
-// Create Photo
 // Create Photo
 router.post('/gallery', requireLogin, upload.single('image'), (req, res) => {
     const gallery = readData('gallery.json');
@@ -608,14 +708,14 @@ router.post('/gallery', requireLogin, upload.single('image'), (req, res) => {
         // Store relative path for frontend access
         imageUrl = '/uploads/gallery/' + req.file.filename;
     } else if (req.body.url) {
-        // Fallback or if we somehow decide to keep URL (though form only has file now)
         imageUrl = req.body.url;
     }
 
     const newPhoto = {
         id: Date.now(),
         url: imageUrl,
-        caption: req.body.caption
+        caption: req.body.caption, // Description
+        category: req.body.category || 'General' // Default to General
     };
     gallery.push(newPhoto);
     writeData('gallery.json', gallery);

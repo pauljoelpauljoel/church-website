@@ -56,7 +56,7 @@ h6,
     transition: height 0.3s ease;
 }
 
-.nav-link {
+.navbar .nav-link {
     color: rgba(255, 255, 255, 0.85) !important;
     font-weight: 500;
     margin: 0 5px;
@@ -64,7 +64,7 @@ h6,
     transition: all 0.3s ease;
 }
 
-.nav-link::after {
+.navbar .nav-link::after {
     content: '';
     position: absolute;
     width: 0;
@@ -76,13 +76,13 @@ h6,
     transform: translateX(-50%);
 }
 
-.nav-link:hover::after,
-.nav-link.active::after {
+.navbar .nav-link:hover::after,
+.navbar .nav-link.active::after {
     width: 100%;
 }
 
-.nav-link:hover,
-.nav-link.active {
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
     color: #fff !important;
     transform: translateY(-2px);
 }

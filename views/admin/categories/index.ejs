@@ -1,0 +1,123 @@
+<%- include('../../partials/header') %>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <h2 class="mb-4">Manage Gallery Categories</h2>
+
+                <!-- Add New Category -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Add New Category</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/admin/categories" method="POST" class="d-flex gap-2">
+                            <input type="text" name="name" id="catNameEn" class="form-control"
+                                placeholder="Category Name (e.g. Youth Ministry)" required>
+                            <input type="text" name="nameTa" id="catNameTa" class="form-control"
+                                placeholder="Tamil Name (e.g. இளைஞர் ஊழியம்)">
+                            <button type="submit" class="btn btn-success">Add</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- List Categories -->
+                <div class="card shadow">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Existing Categories</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <% if(categories && categories.length> 0) { %>
+                            <% categories.forEach(cat=> { %>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold">
+                                        <%= cat.name %>
+                                            <% if(cat.nameTa) { %>
+                                                <small class="text-muted ms-2">(<%= cat.nameTa %>)</small>
+                                                <% } %>
+                                    </span>
+                                    <% if(cat.name !=='General' ) { %>
+                                        <form action="/admin/categories/<%= cat.id %>?_method=DELETE" method="POST"
+                                            onsubmit="return confirm('Are you sure? This might affect photos in this category.')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        <% } else { %>
+                                            <span class="badge bg-secondary">Default</span>
+                                            <% } %>
+                                </li>
+                                <% }) %>
+                                    <% } else { %>
+                                        <li class="list-group-item text-muted">No categories found.</li>
+                                        <% } %>
+                    </ul>
+                </div>
+
+                <div class="mt-4">
+                    <a href="/admin/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            const nameEn = document.getElementById('catNameEn');
+            const nameTa = document.getElementById('catNameTa');
+            const form = document.querySelector('form');
+            let debounceTimer;
+
+            async function translateText(text, fromLang, toLang) {
+                if (!text) return '';
+                try {
+                    const targetInput = fromLang === 'en' ? nameTa : nameEn;
+                    const originalPlaceholder = targetInput.placeholder;
+                    targetInput.placeholder = "Translating...";
+
+                    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${fromLang}&tl=${toLang}&dt=t&q=${encodeURI(text)}`);
+                    const data = await res.json();
+
+                    targetInput.placeholder = originalPlaceholder;
+                    return data[0][0][0];
+                } catch (e) {
+                    console.error('Translation failed', e);
+                    return '';
+                }
+            }
+
+            function debounce(func, timeout = 1000) {
+                return (...args) => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => { func.apply(this, args); }, timeout);
+                };
+            }
+
+            const handleInput = debounce(async (source, target, from, to) => {
+                if (source.value && !target.value) {
+                    const translated = await translateText(source.value, from, to);
+                    if (translated && !target.value) target.value = translated;
+                }
+            });
+
+            nameEn.addEventListener('input', () => handleInput(nameEn, nameTa, 'en', 'ta'));
+            nameTa.addEventListener('input', () => handleInput(nameTa, nameEn, 'ta', 'en'));
+
+            // Ensure translation on submit if missing
+            form.addEventListener('submit', async (e) => {
+                if (nameEn.value && !nameTa.value) {
+                    e.preventDefault(); // Stop submission
+                    const btn = form.querySelector('button');
+                    const originalText = btn.innerText;
+                    btn.innerText = "Translating...";
+                    btn.disabled = true;
+
+                    const translated = await translateText(nameEn.value, 'en', 'ta');
+                    if (translated) nameTa.value = translated;
+
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    form.submit(); // Resume submission
+                }
+            });
+        </script>
+    </div>
+
+    <%- include('../../partials/footer') %>

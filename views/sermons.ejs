@@ -8,18 +8,19 @@
         <div class="row justify-content-center mb-5">
             <div class="col-md-8" data-aos="fade-up">
                 <div class="input-group shadow-sm">
-                    <input type="text" class="form-control form-control-lg border-0"
-                        placeholder="<%= t.search_placeholder %>">
-                    <button class="btn btn-primary px-4" type="button"><i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" class="form-control form-control-lg border-0"
+                        onkeyup="searchSermons()" placeholder="<%= t.search_placeholder %>">
+                    <button class="btn btn-primary px-4" type="button" onclick="searchSermons()"><i
+                            class="fas fa-search"></i>
                         <%= t.search_btn %>
                     </button>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" id="sermonsContainer">
             <% sermons.forEach((sermon, index)=> { %>
-                <div class="col-md-12 mb-4" data-aos="fade-left" data-aos-delay="<%= index * 100 %>">
+                <div class="col-md-12 mb-4 sermon-item" data-aos="fade-left" data-aos-delay="<%= index * 100 %>">
                     <div class="card shadow border-0 overflow-hidden">
                         <div class="card-body p-0">
                             <div class="row g-0">
@@ -65,6 +66,38 @@
                 </div>
                 <% }) %>
         </div>
+        <div id="noResults" class="text-center mt-4 d-none">
+            <h4 class="text-muted">No sermons found matching your search.</h4>
+        </div>
     </div>
+
+    <script>
+        function searchSermons() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const nodes = document.querySelectorAll('.sermon-item');
+            let hasResults = false;
+
+            nodes.forEach(node => {
+                const title = node.querySelector('.card-title').innerText.toLowerCase();
+                const preacher = node.querySelector('.text-muted').innerText.toLowerCase();
+                const desc = node.querySelector('.card-text').innerText.toLowerCase();
+
+                if (title.includes(filter) || preacher.includes(filter) || desc.includes(filter)) {
+                    node.style.display = "block";
+                    hasResults = true;
+                } else {
+                    node.style.display = "none";
+                }
+            });
+
+            const noResults = document.getElementById('noResults');
+            if (hasResults) {
+                noResults.classList.add('d-none');
+            } else {
+                noResults.classList.remove('d-none');
+            }
+        }
+    </script>
 
     <%- include('partials/footer') %>

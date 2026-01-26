@@ -30,9 +30,11 @@ const readData = (filename, req) => {
 };
 
 // Home Page
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+    const { getAdminSettings } = require('../utils/storage');
+    const settings = await getAdminSettings();
     const events = readData('events.json', req).slice(0, 3); // Show top 3 events
-    res.render('home', { title: 'Home', events });
+    res.render('home', { title: 'Home', events, settings });
 });
 
 // About Page
@@ -65,10 +67,12 @@ router.get('/sermons', (req, res) => {
 });
 
 // Gallery Page
-router.get('/gallery', (req, res) => {
+router.get('/gallery', async (req, res) => {
+    const { getCategories } = require('../utils/storage');
     const gallery = readData('gallery.json', req);
+    const categories = await getCategories();
     const title = req.session.lang === 'ta' ? 'புகைப்படங்கள்' : 'Gallery';
-    res.render('gallery', { title, gallery });
+    res.render('gallery', { title, gallery, categories });
 });
 
 // Contact Page

@@ -3,9 +3,45 @@
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h4 class="mb-0">Site Settings</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/admin/settings/site" method="POST">
+                            <h5 class="mb-3">Live Stream</h5>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="liveStreamEnabled"
+                                    name="liveStreamEnabled" <% if(settings && settings.liveStreamEnabled) { %>checked<%
+                                    } %>>
+                                    <label class="form-check-label" for="liveStreamEnabled">Show "Join us Online" on
+                                        Home Page</label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="liveStreamTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="liveStreamTitle" name="liveStreamTitle"
+                                    value="<%= (settings && settings.liveStreamTitle) ? settings.liveStreamTitle : 'Join us Online!' %>"
+                                    placeholder="e.g. Join us Online!">
+                            </div>
+                            <div class="mb-3">
+                                <label for="liveStreamText" class="form-label">Message</label>
+                                <textarea class="form-control" id="liveStreamText" name="liveStreamText" rows="2"
+                                    placeholder="e.g. Can't make it to church? Join our live stream..."><%= (settings && settings.liveStreamText) ? settings.liveStreamText : "Can't make it to church? Join our live stream service every Sunday at 10:30 AM." %></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="liveStreamLink" class="form-label">Live Stream Link</label>
+                                <input type="text" class="form-control" id="liveStreamLink" name="liveStreamLink"
+                                    value="<%= (settings && settings.liveStreamLink) ? settings.liveStreamLink : '#' %>"
+                                    placeholder="https://youtube.com/...">
+                            </div>
+                            <button type="submit" class="btn btn-info w-100 text-white">Save Site Settings</button>
+                        </form>
+                    </div>
+                </div>
+
                 <div class="card shadow">
                     <div class="card-header bg-dark text-white">
-                        <h4 class="mb-0">Admin Settings</h4>
+                        <h4 class="mb-0">Admin Credentials</h4>
                     </div>
                     <div class="card-body">
                         <% if(error) { %>
@@ -20,7 +56,7 @@
                                     <% } %>
 
                                         <form action="/admin/settings" method="POST">
-                                            <h5 class="mb-3">Change Credentials</h5>
+                                            <h5 class="mb-3">Change Password</h5>
                                             <p class="text-muted small">Verify your current credentials to make changes.
                                             </p>
 

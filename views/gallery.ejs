@@ -1,11 +1,30 @@
 <%- include('partials/header') %>
 
     <div class="container py-5">
-        <h1 class="page-title text-center w-100 mb-5" data-aos="fade-down">Photo Gallery</h1>
+        <h1 class="page-title text-center w-100 mb-5" data-aos="fade-down">
+            <%= t.gallery_title || t.gallery %>
+        </h1>
 
-        <div class="row mt-4">
+        <!-- Category Filter Tabs -->
+        <!-- Category Filter Tabs -->
+        <ul class="nav nav-pills justify-content-center mb-5" id="galleryTabs" role="tablist" data-aos="fade-up">
+            <% if(typeof categories !=='undefined' ) { %>
+                <% categories.forEach((cat, index)=> { %>
+                    <li class="nav-item m-1" role="presentation">
+                        <button class="nav-link rounded-pill px-4 <%= index === 0 ? 'active' : '' %>"
+                            id="<%= cat.name.replace(/\s+/g, '-').toLowerCase() %>-tab" data-bs-toggle="pill"
+                            type="button" role="tab" onclick="filterGallery('<%= cat.name %>')">
+                            <%= (currentLang==='ta' && cat.nameTa) ? cat.nameTa : (t[cat.name] || cat.name) %>
+                        </button>
+                    </li>
+                    <% }) %>
+                        <% } %>
+        </ul>
+
+        <div class="row mt-4" id="galleryGrid">
             <% gallery.forEach((item, index)=> { %>
-                <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="<%= index * 100 %>">
+                <div class="col-md-4 mb-4 gallery-item" data-category="<%= item.category || 'General' %>"
+                    data-aos="zoom-in" data-aos-delay="<%= index * 100 %>">
                     <div class="card border-0 gallery-card position-relative overflow-hidden cursor-pointer"
                         data-bs-toggle="modal" data-bs-target="#galleryModal"
                         onclick="updateGalleryModal('<%= item.url %>', '<%= item.caption %>')">
@@ -13,11 +32,17 @@
                         <img src="<%= item.url %>" class="card-img rounded shadow-sm" alt="<%= item.caption %>"
                             style="height: 300px; object-fit: cover;">
 
-                        <div class="card-gallery-overlay d-flex flex-column align-items-center justify-content-center">
+                        <div
+                            class="card-gallery-overlay d-flex flex-column align-items-center justify-content-center text-center p-3">
                             <i class="fas fa-search-plus fa-3x text-white mb-2"></i>
-                            <p class="text-white fw-bold fs-5">
+                            <p class="text-white fw-bold fs-5 mb-1">
                                 <%= item.caption %>
                             </p>
+                            <span class="badge bg-light text-primary rounded-pill small">
+                                <% const catObj=categories.find(c=> c.name === (item.category || 'General')); %>
+                                    <%= (currentLang==='ta' && catObj && catObj.nameTa) ? catObj.nameTa :
+                                        (t[item.category || 'General' ] || item.category || 'General' ) %>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -73,6 +98,35 @@
             document.getElementById('modalImage').src = url;
             document.getElementById('modalCaption').innerText = caption;
         }
+
+        function filterGallery(category) {
+            const items = document.querySelectorAll('.gallery-item');
+
+            items.forEach(item => {
+                const itemCategory = item.getAttribute('data-category');
+
+                if (itemCategory === category) {
+                    item.style.display = 'block';
+                    // Re-trigger AOS animation
+                    item.classList.remove('aos-animate');
+                    setTimeout(() => {
+                        item.classList.add('aos-animate');
+                    }, 50);
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Initialize with the first category on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstTab = document.querySelector('#galleryTabs .nav-link.active');
+            if (firstTab) {
+                // Clean up the text content to get just the name
+                const firstCategory = firstTab.innerText.trim();
+                filterGallery(firstCategory);
+            }
+        });
     </script>
 
     <%- include('partials/footer') %>
