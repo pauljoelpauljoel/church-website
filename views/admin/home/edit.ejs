@@ -1,0 +1,157 @@
+<%- include('../../partials/header') %>
+    <%- include('../../partials/translation_script') %>
+
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="card shadow-lg">
+                        <div
+                            class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0">Edit Home Page Content</h3>
+                            <a href="/admin/dashboard" class="btn btn-light btn-sm">Back to Dashboard</a>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="/admin/home" method="POST">
+
+                                <h4 class="mb-3 border-bottom pb-2">Hero Section</h4>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Welcome Title (English)</label>
+                                        <input type="text" id="welcome_title" name="welcome_title" class="form-control"
+                                            value="<%= home.welcome_title %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Welcome Title (Tamil)</label>
+                                        <input type="text" id="welcome_titleTa" name="welcome_titleTa"
+                                            class="form-control" value="<%= homeTa.welcome_title || '' %>"
+                                            placeholder="Translating...">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Welcome Quote (English)</label>
+                                        <textarea id="welcome_quote" name="welcome_quote" class="form-control"
+                                            rows="2"><%= home.welcome_quote %></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Welcome Quote (Tamil)</label>
+                                        <textarea id="welcome_quoteTa" name="welcome_quoteTa" class="form-control"
+                                            rows="2"
+                                            placeholder="Translating..."><%= homeTa.welcome_quote || '' %></textarea>
+                                    </div>
+                                </div>
+
+                                <h4 class="mb-3 border-bottom pb-2 mt-4">Feature Cards</h4>
+
+                                <!-- Worship Card -->
+                                <h5 class="text-primary">Worship Card</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Title (English)</label>
+                                        <input type="text" id="worship" name="worship" class="form-control"
+                                            value="<%= home.worship %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Title (Tamil)</label>
+                                        <input type="text" id="worshipTa" name="worshipTa" class="form-control"
+                                            value="<%= homeTa.worship || '' %>" placeholder="Translating...">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Text (English)</label>
+                                        <textarea id="worship_text" name="worship_text" class="form-control"
+                                            rows="2"><%= home.worship_text %></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Text (Tamil)</label>
+                                        <textarea id="worship_textTa" name="worship_textTa" class="form-control"
+                                            rows="2"
+                                            placeholder="Translating..."><%= homeTa.worship_text || '' %></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Community Card -->
+                                <h5 class="text-primary mt-3">Community Card</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Title (English)</label>
+                                        <input type="text" id="community" name="community" class="form-control"
+                                            value="<%= home.community %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Title (Tamil)</label>
+                                        <input type="text" id="communityTa" name="communityTa" class="form-control"
+                                            value="<%= homeTa.community || '' %>" placeholder="Translating...">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Text (English)</label>
+                                        <textarea id="community_text" name="community_text" class="form-control"
+                                            rows="2"><%= home.community_text %></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Text (Tamil)</label>
+                                        <textarea id="community_textTa" name="community_textTa" class="form-control"
+                                            rows="2"
+                                            placeholder="Translating..."><%= homeTa.community_text || '' %></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Word Card -->
+                                <h5 class="text-primary mt-3">Word Card</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Title (English)</label>
+                                        <input type="text" id="word" name="word" class="form-control"
+                                            value="<%= home.word %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Title (Tamil)</label>
+                                        <input type="text" id="wordTa" name="wordTa" class="form-control"
+                                            value="<%= homeTa.word || '' %>" placeholder="Translating...">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Text (English)</label>
+                                        <textarea id="word_text" name="word_text" class="form-control"
+                                            rows="2"><%= home.word_text %></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Text (Tamil)</label>
+                                        <textarea id="word_textTa" name="word_textTa" class="form-control" rows="2"
+                                            placeholder="Translating..."><%= homeTa.word_text || '' %></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
+                                    <a href="/admin/dashboard" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                setupTranslation('welcome_title', 'welcome_titleTa');
+                setupTranslation('welcome_quote', 'welcome_quoteTa');
+
+                setupTranslation('worship', 'worshipTa');
+                setupTranslation('worship_text', 'worship_textTa');
+
+                setupTranslation('community', 'communityTa');
+                setupTranslation('community_text', 'community_textTa');
+
+                setupTranslation('word', 'wordTa');
+                setupTranslation('word_text', 'word_textTa');
+            });
+        </script>
+
+        <%- include('../../partials/footer') %>

@@ -1,50 +1,92 @@
 <%- include('../../partials/header') %>
+    <%- include('../../partials/translation_script') %>
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">Add New Service</h3>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="/admin/services" method="POST">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Service Name</label>
-                                <input type="text" name="name" class="form-control"
-                                    placeholder="e.g. Sunday Morning Mass" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Day</label>
-                                <select name="day" class="form-select" required>
-                                    <option value="Sunday">Sunday</option>
-                                    <option value="Monday">Monday</option>
-                                    <option value="Tuesday">Tuesday</option>
-                                    <option value="Wednesday">Wednesday</option>
-                                    <option value="Thursday">Thursday</option>
-                                    <option value="Friday">Friday</option>
-                                    <option value="Saturday">Saturday</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Time</label>
-                                <input type="text" name="time" class="form-control" placeholder="e.g. 10:00 AM"
-                                    required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Location</label>
-                                <input type="text" name="location" class="form-control"
-                                    placeholder="e.g. Main Sanctuary" required>
-                            </div>
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">Create Service</button>
-                                <a href="/admin/services" class="btn btn-secondary">Cancel</a>
-                            </div>
-                        </form>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0">Add New Service</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="/admin/services" method="POST">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Service Name (English)</label>
+                                        <input type="text" id="name" name="name" class="form-control"
+                                            placeholder="e.g. Sunday Morning Mass" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Service Name (Tamil)</label>
+                                        <input type="text" id="nameTa" name="nameTa" class="form-control"
+                                            placeholder="Translating...">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Day (English)</label>
+                                        <select id="day" name="day" class="form-select" required>
+                                            <option value="Sunday">Sunday</option>
+                                            <option value="Monday">Monday</option>
+                                            <option value="Tuesday">Tuesday</option>
+                                            <option value="Wednesday">Wednesday</option>
+                                            <option value="Thursday">Thursday</option>
+                                            <option value="Friday">Friday</option>
+                                            <option value="Saturday">Saturday</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Day (Tamil)</label>
+                                        <input type="text" id="dayTa" name="dayTa" class="form-control"
+                                            placeholder="Translating...">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Time (English)</label>
+                                        <input type="text" id="time" name="time" class="form-control"
+                                            placeholder="e.g. 10:00 AM" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Time (Tamil)</label>
+                                        <input type="text" id="timeTa" name="timeTa" class="form-control"
+                                            placeholder="Translating...">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Location (English)</label>
+                                        <input type="text" id="location" name="location" class="form-control"
+                                            placeholder="e.g. Main Sanctuary" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Location (Tamil)</label>
+                                        <input type="text" id="locationTa" name="locationTa" class="form-control"
+                                            placeholder="Translating...">
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg">Create Service</button>
+                                    <a href="/admin/services" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <%- include('../../partials/footer') %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                setupTranslation('name', 'nameTa');
+                setupTranslation('day', 'dayTa');
+                setupTranslation('time', 'timeTa');
+                setupTranslation('location', 'locationTa');
+            });
+        </script>
+
+        <%- include('../../partials/footer') %>

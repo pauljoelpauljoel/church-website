@@ -2,100 +2,96 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
+const { getData, getAdminSettings, getCategories, getPrayers, savePrayers } = require('../utils/storage');
 
-// Helper to read data
-const readData = (filename, req) => {
-    // Check for localized file if lang is ta
+// Helper to resolve key based on language
+const getKey = (baseKey, req) => {
     const lang = req && req.session ? req.session.lang : 'en';
-    let targetFile = filename;
-
     if (lang === 'ta') {
-        const namePart = filename.split('.')[0];
-        const extPart = filename.split('.')[1];
-        const localizedName = `${namePart}_ta.${extPart}`;
-
-        if (fs.existsSync(path.join(__dirname, '../data', localizedName))) {
-            targetFile = localizedName;
-        }
+        return `${baseKey}_ta`;
     }
-
-    const filePath = path.join(__dirname, '../data', targetFile);
-    // Fallback to default if localized file missing (redundant check but safe)
-    if (!fs.existsSync(filePath)) {
-        return JSON.parse(fs.readFileSync(path.join(__dirname, '../data', filename)));
-    }
-
-    const rawData = fs.readFileSync(filePath);
-    return JSON.parse(rawData);
+    return baseKey;
 };
 
 // Home Page
 router.get('/', async (req, res) => {
-    const { getAdminSettings } = require('../utils/storage');
     const settings = await getAdminSettings();
-    const events = readData('events.json', req).slice(0, 3); // Show top 3 events
-    res.render('home', { title: 'Home', events, settings });
+    const headersKey = getKey('home', req);
+    const home = await getData(headersKey, {});
+
+    const key = getKey('events', req);
+    const eventsAll = await getData(key, []);
+    const events = eventsAll.slice(0, 3); // Show top 3 events
+
+    res.render('home', { title: 'Home', events, settings, home });
 });
 
 // About Page
-router.get('/about', (req, res) => {
-    const about = readData('about.json', req);
-    const team = readData('team.json', req);
+router.get('/about', async (req, res) => {
+    const aboutKey = getKey('about', req);
+    const teamKey = getKey('team', req);
+
+    const about = await getData(aboutKey, {});
+    const team = await getData(teamKey, []);
+
     const title = req.session.lang === 'ta' ? 'எங்களைப் பற்றி' : 'About Us';
     res.render('about', { title, about, team });
 });
 
 // Services Page
-router.get('/services', (req, res) => {
-    const services = readData('services.json', req);
+router.get('/services', async (req, res) => {
+    const key = getKey('services', req);
+    const services = await getData(key, []);
     const title = req.session.lang === 'ta' ? 'ஆராதனை நேரங்கள்' : 'Service Times';
     res.render('services', { title, services });
 });
 
 // Events Page
-router.get('/events', (req, res) => {
-    const events = readData('events.json', req);
+router.get('/events', async (req, res) => {
+    const key = getKey('events', req);
+    const events = await getData(key, []);
     const title = req.session.lang === 'ta' ? 'நிகழ்வுகள்' : 'Events';
     res.render('events', { title, events });
 });
 
 // Sermons Page
-router.get('/sermons', (req, res) => {
-    const sermons = readData('sermons.json', req);
+router.get('/sermons', async (req, res) => {
+    // Sermons might not have translations or might use same file? 
+    // Original code used readData('sermons.json', req) which supported _ta.
+    const key = getKey('sermons', req);
+    const sermons = await getData(key, []);
     const title = req.session.lang === 'ta' ? 'திருச்சபை பிரசங்கங்கள்' : 'Sermons';
     res.render('sermons', { title, sermons });
 });
 
 // Gallery Page
 router.get('/gallery', async (req, res) => {
-    const { getCategories } = require('../utils/storage');
-    const gallery = readData('gallery.json', req);
+    const key = getKey('gallery', req);
+    const gallery = await getData(key, []);
     const categories = await getCategories();
     const title = req.session.lang === 'ta' ? 'புகைப்படங்கள்' : 'Gallery';
     res.render('gallery', { title, gallery, categories });
 });
 
 // Contact Page
-router.get('/contact', (req, res) => {
-    const contact = readData('contact.json', req);
+router.get('/contact', async (req, res) => {
+    const key = getKey('contact', req);
+    const contact = await getData(key, {});
     const title = req.session.lang === 'ta' ? 'தொடர்பு கொள்ள' : 'Contact Us';
     res.render('contact', { title, contact });
 });
 
 // Donate Page
-router.get('/donate', (req, res) => {
-    const donate = readData('donate.json', req);
+router.get('/donate', async (req, res) => {
+    const key = getKey('donate', req);
+    const donate = await getData(key, {});
     const title = req.session.lang === 'ta' ? 'நன்கொடை' : 'Donate';
     res.render('donate', { title, donate });
 });
 
-// Prayer Request (POST)
-// Prayer Request (POST)
 // Prayers Page (Public Prayer Wall)
 router.get('/prayers', async (req, res) => {
     try {
-        // Use external storage utility for persistence
-        const { getPrayers } = require('../utils/storage');
         const allPrayers = await getPrayers();
 
         const prayers = allPrayers.filter(p => !p.confidential);
@@ -113,7 +109,6 @@ router.get('/prayers', async (req, res) => {
 // Prayer Request (POST)
 router.post('/prayer', async (req, res) => {
     try {
-        const { getPrayers, savePrayers } = require('../utils/storage');
         const { name, message, confidential } = req.body;
         const prayers = await getPrayers();
 
@@ -142,7 +137,6 @@ router.post('/prayer', async (req, res) => {
 // API endpoint to increment/decrement prayer count
 router.post('/api/pray/:id', async (req, res) => {
     try {
-        const { getPrayers, savePrayers } = require('../utils/storage');
         const prayers = await getPrayers();
         const id = parseInt(req.params.id);
         const prayerIndex = prayers.findIndex(p => p.id === id);

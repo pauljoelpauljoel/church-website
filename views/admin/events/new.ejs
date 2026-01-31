@@ -1,39 +1,65 @@
 <%- include('../../partials/header') %>
+    <%- include('../../partials/translation_script') %>
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">Add New Event</h3>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="/admin/events" method="POST" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label class="form-label">Event Title</label>
-                                <input type="text" class="form-control" name="title" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Date</label>
-                                <input type="text" class="form-control" name="date" placeholder="e.g. June 15, 2026"
-                                    required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Description</label>
-                                <textarea class="form-control" name="description" rows="3" required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Event Image</label>
-                                <input type="file" class="form-control" name="image" accept="image/*">
-                                <small class="text-muted">Upload an image (optional).</small>
-                            </div>
-                            <button type="submit" class="btn btn-success">Create Event</button>
-                            <a href="/admin/events" class="btn btn-secondary">Cancel</a>
-                        </form>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0">Add New Event</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="/admin/events" method="POST" enctype="multipart/form-data">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Event Title (English)</label>
+                                        <input type="text" class="form-control" id="title" name="title" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Event Title (Tamil)</label>
+                                        <input type="text" class="form-control" id="titleTa" name="titleTa"
+                                            placeholder="Translating...">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Date</label>
+                                    <input type="text" class="form-control" name="date" placeholder="e.g. June 15, 2026"
+                                        required>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Description (English)</label>
+                                        <textarea class="form-control" id="description" name="description" rows="3"
+                                            required></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Description (Tamil)</label>
+                                        <textarea class="form-control" id="descriptionTa" name="descriptionTa" rows="3"
+                                            placeholder="Translating..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Event Image</label>
+                                    <input type="file" class="form-control" name="image" accept="image/*">
+                                    <small class="text-muted">Upload an image (optional).</small>
+                                </div>
+                                <button type="submit" class="btn btn-success">Create Event</button>
+                                <a href="/admin/events" class="btn btn-secondary">Cancel</a>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <%- include('../../partials/footer') %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                setupTranslation('title', 'titleTa');
+                setupTranslation('description', 'descriptionTa');
+            });
+        </script>
+
+        <%- include('../../partials/footer') %>

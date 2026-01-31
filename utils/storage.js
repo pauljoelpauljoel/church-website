@@ -3,128 +3,112 @@ const path = require('path');
 const axios = require('axios');
 require('dotenv').config();
 
-const localFilePath = path.join(__dirname, '../data/prayers.json');
 const JSONBIN_API_URL = 'https://api.jsonbin.io/v3/b';
+// Cache structure to minimize API calls
+let memCache = {};
+let lastFetchTime = 0;
+const CACHE_TTL = 30 * 1000; // 30 seconds cache
 
-// Helper to fetch from Bin or Local
-async function fetchDataFromBin(binId, key, defaultVal) {
-    // 1. Try Local First (sychronous read is fast)
-    let localData = defaultVal;
-    try {
-        const localPath = path.join(__dirname, `../data/${key || 'data'}.json`);
-        if (fs.existsSync(localPath)) {
-            localData = JSON.parse(fs.readFileSync(localPath));
-        }
-    } catch (e) {
-        // ignore local read error
-    }
-
-    // 2. Try JSONBin
-    if (binId && process.env.JSONBIN_SECRET) {
-        try {
-            const response = await axios.get(`${JSONBIN_API_URL}/${binId}/latest`, {
-                headers: { 'X-Master-Key': process.env.JSONBIN_SECRET }
-            });
-            // If the bin returns an object wrapper { prayers: [...] }
-            if (key && response.data.record && response.data.record[key]) {
-                // Background update local cache
-                writeLocal(response.data.record[key], `${key}.json`);
-                return response.data.record[key];
-            } else if (response.data.record) {
-                // Legacy or direct array or when key is not matching
-                // But if we asked for a specific key and didn't find it, we should maybe return default
-                if (key && !response.data.record[key]) {
-                    // Check if it's the old format where root is the array
-                    if (key === 'prayers' && Array.isArray(response.data.record)) return response.data.record;
-                    return localData;
-                }
-                return response.data.record;
-            }
-        } catch (error) {
-            console.error(`JSONBin fetch error for ${key}:`, error.message);
-        }
-    }
-    return localData;
-}
-
-function writeLocal(data, filename = 'prayers.json') {
-    try {
-        const filePath = path.join(__dirname, `../data/${filename}`);
-        fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-    } catch (e) {
-        console.error('Error writing local file:', e.message);
-    }
-}
-
-async function getPrayers() {
-    return await fetchDataFromBin(process.env.JSONBIN_BIN_ID, 'prayers', []);
-}
-
-async function savePrayers(prayers) {
+// Helper to fetch entire bin
+async function fetchBin() {
     const BIN_ID = process.env.JSONBIN_BIN_ID;
     const MASTER_KEY = process.env.JSONBIN_SECRET;
 
-    // Always save locally first as a backup/cache
-    writeLocal(prayers, 'prayers.json');
+    if (!BIN_ID || !MASTER_KEY) return null;
 
-    // If credentials exists, save to cloud
+    // Return cached if fresh
+    if (Date.now() - lastFetchTime < CACHE_TTL && Object.keys(memCache).length > 0) {
+        return memCache;
+    }
+
+    try {
+        const response = await axios.get(`${JSONBIN_API_URL}/${BIN_ID}/latest`, {
+            headers: { 'X-Master-Key': MASTER_KEY }
+        });
+
+        // Update cache
+        if (response.data.record) {
+            memCache = response.data.record;
+            lastFetchTime = Date.now();
+            return memCache;
+        }
+    } catch (error) {
+        console.error('JSONBin fetch error:', error.message);
+    }
+    return null;
+}
+
+// Generic Get Data
+async function getData(key, defaultVal = []) {
+    // 1. Try to fetch from cloud
+    const cloudData = await fetchBin();
+
+    if (cloudData && cloudData[key]) {
+        return cloudData[key];
+    }
+
+    // 2. If cloud fails or key missing, check local cache/file as fallback
+    // This is useful for initial bootstrap or offline dev
+    try {
+        const localPath = path.join(__dirname, `../data/${key}.json`);
+        if (fs.existsSync(localPath)) {
+            const localContent = JSON.parse(fs.readFileSync(localPath, 'utf8'));
+            return localContent;
+        }
+    } catch (e) {
+        // ignore
+    }
+
+    return defaultVal;
+}
+
+// Generic Save Data
+async function saveData(key, data) {
+    const BIN_ID = process.env.JSONBIN_BIN_ID;
+    const MASTER_KEY = process.env.JSONBIN_SECRET;
+
+    // 1. Update Local File (Backup/Dev)
+    try {
+        const dir = path.join(__dirname, '../data');
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+        const filePath = path.join(dir, `${key}.json`);
+        // Handle array vs object differentiation if needed, but standardizing as JSON is fine
+        fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    } catch (e) {
+        console.error(`Error writing local file for ${key}:`, e.message);
+    }
+
+    // 2. Update Cloud
     if (BIN_ID && MASTER_KEY) {
         try {
-            const payload = { prayers: prayers };
-            await axios.put(`${JSONBIN_API_URL}/${BIN_ID}`, payload, {
+            // We must fetch latest first to not overwrite other keys
+            let currentRecord = await fetchBin() || {};
+
+            // Update specific key
+            currentRecord[key] = data;
+
+            await axios.put(`${JSONBIN_API_URL}/${BIN_ID}`, currentRecord, {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Master-Key': MASTER_KEY
                 }
             });
+
+            // Update memory cache immediately
+            memCache = currentRecord;
+            lastFetchTime = Date.now();
+
+            return true;
         } catch (error) {
-            console.error('Error saving to JSONBin:', error.message);
+            console.error(`Error saving ${key} to JSONBin:`, error.message);
+            return false;
         }
     }
+    return true; // Return true if local save worked and no cloud creds (dev mode)
 }
 
-// --- CATEGORIES STORAGE ---
-async function getCategories() {
-    return await fetchDataFromBin(process.env.JSONBIN_BIN_ID, 'categories', [
-        { id: 1, name: "General" },
-        { id: 2, name: "Children Ministry" },
-        { id: 3, name: "Youths Ministry" }
-    ]);
-}
-
-async function saveCategories(categories) {
-    const BIN_ID = process.env.JSONBIN_BIN_ID;
-    const MASTER_KEY = process.env.JSONBIN_SECRET;
-
-    // Save locally
-    writeLocal(categories, 'categories.json');
-
-    // Save to cloud
-    if (BIN_ID && MASTER_KEY) {
-        try {
-            // We need to be careful not to overwrite prayers if they share the same bin.
-            // But currently they share JSONBIN_BIN_ID.
-            // If we use PUT, we overwrite the whole bin.
-            // Ideally we need to fetch, merge, and save.
-            // OR use a separate bin for categories?
-            // User didn't ask for separate bin.
-            // Let's Fetch existing data first (prayers) then merge categories.
-
-            const existingPrayers = await getPrayers();
-            const payload = {
-                prayers: existingPrayers,
-                categories: categories
-            };
-
-            await axios.put(`${JSONBIN_API_URL}/${BIN_ID}`, payload, {
-                headers: { 'Content-Type': 'application/json', 'X-Master-Key': MASTER_KEY }
-            });
-        } catch (error) {
-            console.error('Error saving categories to JSONBin:', error.message);
-        }
-    }
-}
-
+// Admin Settings Specific Functions (Separate Bin)
 async function getAdminSettings() {
     const BIN_ID = process.env.JSONBIN_ADMIN_ID;
     const MASTER_KEY = process.env.JSONBIN_SECRET;
@@ -136,8 +120,7 @@ async function getAdminSettings() {
             });
             return response.data.record || { username: 'admin', password: 'church123' };
         } catch (error) {
-            console.error('Error fetching admin settings:', error.message);
-            return { username: 'admin', password: 'church123' };
+            // console.error('Error fetching admin settings:', error.message);
         }
     }
     return { username: 'admin', password: 'church123' };
@@ -164,11 +147,20 @@ async function saveAdminSettings(settings) {
     return false;
 }
 
+// Deprecated/Alias wrappers for backward compatibility if needed, 
+// but best to use generic ones in new code.
+async function getPrayers() { return await getData('prayers', []); }
+async function savePrayers(data) { return await saveData('prayers', data); }
+async function getCategories() { return await getData('categories', []); }
+async function saveCategories(data) { return await saveData('categories', data); }
+
 module.exports = {
-    getPrayers,
-    savePrayers,
+    getData,
+    saveData,
     getAdminSettings,
     saveAdminSettings,
+    getPrayers,
+    savePrayers,
     getCategories,
     saveCategories
 };

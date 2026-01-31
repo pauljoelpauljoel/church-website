@@ -1,50 +1,81 @@
 <%- include('../../partials/header') %>
+    <%- include('../../partials/translation_script') %>
 
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <h3 class="mb-0">Edit Team Member</h3>
-                    </div>
-                    <div class="card-body">
-                        <form action="/admin/team/<%= member.id %>" method="POST" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" value="<%= member.name %>"
-                                    required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="role" class="form-label">Role / Position</label>
-                                <input type="text" class="form-control" id="role" name="role" value="<%= member.role %>"
-                                    required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="image" class="form-label">Photo</label>
-                                <div class="mb-2">
-                                    <img src="<%= member.image %>" class="rounded" width="100" alt="Current Photo">
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-white">
+                            <h3 class="mb-0">Edit Team Member</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="/admin/team/<%= member.id %>" method="POST" enctype="multipart/form-data">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="name" class="form-label">Name (English)</label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="<%= member.name %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="nameTa" class="form-label">Name (Tamil)</label>
+                                        <input type="text" class="form-control" id="nameTa" name="nameTa"
+                                            value="<%= member.nameTa || '' %>" placeholder="Translating...">
+                                    </div>
                                 </div>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                                <div class="form-text">Leave empty to keep current photo.</div>
-                            </div>
 
-                            <div class="mb-3">
-                                <label for="quote" class="form-label">Short Quote / Bio</label>
-                                <textarea class="form-control" id="quote" name="quote" rows="2"
-                                    maxlength="150"><%= member.quote %></textarea>
-                            </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="role" class="form-label">Role / Position (English)</label>
+                                        <input type="text" class="form-control" id="role" name="role"
+                                            value="<%= member.role %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="roleTa" class="form-label">Role / Position (Tamil)</label>
+                                        <input type="text" class="form-control" id="roleTa" name="roleTa"
+                                            value="<%= member.roleTa || '' %>" placeholder="Translating...">
+                                    </div>
+                                </div>
 
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
-                                <a href="/admin/team" class="btn btn-secondary">Cancel</a>
-                            </div>
-                        </form>
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Photo</label>
+                                    <div class="mb-2">
+                                        <img src="<%= member.image %>" class="rounded" width="100" alt="Current Photo">
+                                    </div>
+                                    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                    <div class="form-text">Leave empty to keep current photo.</div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="quote" class="form-label">Short Quote / Bio (English)</label>
+                                        <textarea class="form-control" id="quote" name="quote" rows="2"
+                                            maxlength="150"><%= member.quote %></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="quoteTa" class="form-label">Short Quote / Bio (Tamil)</label>
+                                        <textarea class="form-control" id="quoteTa" name="quoteTa" rows="2"
+                                            maxlength="150"
+                                            placeholder="Translating..."><%= member.quoteTa || '' %></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    <a href="/admin/team" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <%- include('../../partials/footer') %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                setupTranslation('name', 'nameTa');
+                setupTranslation('role', 'roleTa');
+                setupTranslation('quote', 'quoteTa');
+            });
+        </script>
+
+        <%- include('../../partials/footer') %>

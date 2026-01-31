@@ -1,50 +1,83 @@
 <%- include('../../partials/header') %>
+    <%- include('../../partials/translation_script') %>
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">Add New Sermon</h3>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="/admin/sermons" method="POST">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Sermon Title</label>
-                                    <input type="text" name="title" class="form-control" required>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0">Add New Sermon</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="/admin/sermons" method="POST">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Sermon Title (English)</label>
+                                        <input type="text" id="title" name="title" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Sermon Title (Tamil)</label>
+                                        <input type="text" id="titleTa" name="titleTa" class="form-control"
+                                            placeholder="Translating...">
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Preacher</label>
-                                    <input type="text" name="preacher" class="form-control" required>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Preacher (English)</label>
+                                        <input type="text" id="preacher" name="preacher" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Preacher (Tamil)</label>
+                                        <input type="text" id="preacherTa" name="preacherTa" class="form-control"
+                                            placeholder="Translating...">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Date</label>
-                                <input type="date" name="date" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Video URL (YouTube Embed)</label>
-                                <input type="url" name="videoUrl" class="form-control"
-                                    placeholder="https://www.youtube.com/embed/..." required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Audio URL</label>
-                                <input type="text" name="audioUrl" class="form-control" placeholder="#">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Description</label>
-                                <textarea name="description" class="form-control" rows="4" required></textarea>
-                            </div>
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">Add Sermon</button>
-                                <a href="/admin/sermons" class="btn btn-secondary">Cancel</a>
-                            </div>
-                        </form>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Date</label>
+                                    <input type="date" name="date" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Video URL (YouTube Embed)</label>
+                                    <input type="url" name="videoUrl" class="form-control"
+                                        placeholder="https://www.youtube.com/embed/..." required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Audio URL</label>
+                                    <input type="text" name="audioUrl" class="form-control" placeholder="#">
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Description (English)</label>
+                                        <textarea id="description" name="description" class="form-control" rows="4"
+                                            required></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Description (Tamil)</label>
+                                        <textarea id="descriptionTa" name="descriptionTa" class="form-control" rows="4"
+                                            placeholder="Translating..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg">Add Sermon</button>
+                                    <a href="/admin/sermons" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <%- include('../../partials/footer') %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                setupTranslation('title', 'titleTa');
+                setupTranslation('preacher', 'preacherTa');
+                setupTranslation('description', 'descriptionTa');
+            });
+        </script>
+
+        <%- include('../../partials/footer') %>

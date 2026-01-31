@@ -1,74 +1,99 @@
 <%- include('../../partials/header') %>
+    <%- include('../../partials/translation_script') %>
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-8 mx-auto">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">Edit Donation Information</h3>
-                    </div>
-                    <div class="card-body">
-                        <form action="/admin/donate" method="POST" enctype="multipart/form-data">
-                            <h5 class="mb-3 text-secondary">Bank Details</h5>
-                            <div class="mb-3">
-                                <label class="form-label">Account Name</label>
-                                <input type="text" class="form-control" name="bankName" value="<%= donate.bankName %>"
-                                    required>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Account Number</label>
-                                    <input type="text" class="form-control" name="accNo" value="<%= donate.accNo %>"
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0">Edit Donation Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="/admin/donate" method="POST" enctype="multipart/form-data">
+                                <h5 class="mb-3 text-secondary">Bank Details</h5>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Account Name (English)</label>
+                                        <input type="text" class="form-control" id="bankName" name="bankName"
+                                            value="<%= donate.bankName %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Account Name (Tamil)</label>
+                                        <input type="text" class="form-control" id="bankNameTa" name="bankNameTa"
+                                            value="<%= donateTa.bankName || '' %>" placeholder="Translating...">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Account Number</label>
+                                        <input type="text" class="form-control" name="accNo" value="<%= donate.accNo %>"
+                                            required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">IFSC Code</label>
+                                        <input type="text" class="form-control" name="ifsc" value="<%= donate.ifsc %>"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Branch Name (English)</label>
+                                        <input type="text" class="form-control" id="branch" name="branch"
+                                            value="<%= donate.branch %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Branch Name (Tamil)</label>
+                                        <input type="text" class="form-control" id="branchTa" name="branchTa"
+                                            value="<%= donateTa.branch || '' %>" placeholder="Translating...">
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <h5 class="mb-3 text-secondary">UPI Details</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">UPI ID</label>
+                                    <input type="text" class="form-control" name="upiId" value="<%= donate.upiId %>"
                                         required>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">IFSC Code</label>
-                                    <input type="text" class="form-control" name="ifsc" value="<%= donate.ifsc %>"
-                                        required>
+                                <div class="mb-3">
+                                    <label class="form-label">Current QR Code</label><br>
+                                    <% if (donate.upiQr) { %>
+                                        <img src="<%= donate.upiQr %>" alt="Current QR"
+                                            style="max-width: 150px; border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
+                                        <% } else { %>
+                                            <p class="text-muted">No QR code set.</p>
+                                            <% } %>
                                 </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Branch Name</label>
-                                <input type="text" class="form-control" name="branch" value="<%= donate.branch %>"
-                                    required>
-                            </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Upload New QR Image</label>
+                                    <input type="file" class="form-control" name="qrImage" accept="image/*">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">OR Enter QR Code URL</label>
+                                    <input type="text" class="form-control" name="upiQr" value="<%= donate.upiQr %>"
+                                        placeholder="https://...">
+                                    <small class="text-muted">Leave blank if uploading a file.</small>
+                                </div>
 
-                            <hr>
-                            <h5 class="mb-3 text-secondary">UPI Details</h5>
-                            <div class="mb-3">
-                                <label class="form-label">UPI ID</label>
-                                <input type="text" class="form-control" name="upiId" value="<%= donate.upiId %>"
-                                    required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Current QR Code</label><br>
-                                <% if (donate.upiQr) { %>
-                                    <img src="<%= donate.upiQr %>" alt="Current QR"
-                                        style="max-width: 150px; border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
-                                    <% } else { %>
-                                        <p class="text-muted">No QR code set.</p>
-                                        <% } %>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Upload New QR Image</label>
-                                <input type="file" class="form-control" name="qrImage" accept="image/*">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">OR Enter QR Code URL</label>
-                                <input type="text" class="form-control" name="upiQr" value="<%= donate.upiQr %>"
-                                    placeholder="https://...">
-                                <small class="text-muted">Leave blank if uploading a file.</small>
-                            </div>
-
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">Update Donation Info</button>
-                                <a href="/admin/dashboard" class="btn btn-secondary">Cancel</a>
-                            </div>
-                        </form>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg">Update Donation Info</button>
+                                    <a href="/admin/dashboard" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <%- include('../../partials/footer') %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                setupTranslation('bankName', 'bankNameTa');
+                setupTranslation('branch', 'branchTa');
+            });
+        </script>
+
+        <%- include('../../partials/footer') %>

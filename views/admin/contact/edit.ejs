@@ -1,77 +1,101 @@
 <%- include('../../partials/header') %>
+    <%- include('../../partials/translation_script') %>
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-8 mx-auto">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">Edit Contact Information</h3>
-                    </div>
-                    <div class="card-body">
-                        <form action="/admin/contact" method="POST">
-                            <div class="mb-3">
-                                <label class="form-label">Church Address</label>
-                                <textarea class="form-control" name="address" rows="3"
-                                    required><%= contact.address %></textarea>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Phone Number</label>
-                                    <input type="text" class="form-control" name="phone" value="<%= contact.phone %>"
-                                        required>
-                                    <small class="text-muted">10-digit adds +91 automatically.</small>
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0">Edit Contact Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="/admin/contact" method="POST">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Church Address (English)</label>
+                                        <textarea class="form-control" id="address" name="address" rows="3"
+                                            required><%= contact.address %></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Church Address (Tamil)</label>
+                                        <textarea class="form-control" id="addressTa" name="addressTa" rows="3"
+                                            placeholder="Translating..."><%= contactTa.address || '' %></textarea>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" name="email" value="<%= contact.email %>"
-                                        required>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="text" class="form-control" name="phone"
+                                            value="<%= contact.phone %>" required>
+                                        <small class="text-muted">10-digit adds +91 automatically.</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" name="email"
+                                            value="<%= contact.email %>" required>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Office Hours</label>
-                                <input type="text" class="form-control" name="officeHours"
-                                    value="<%= contact.officeHours %>" required>
-                            </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Office Hours (English)</label>
+                                        <input type="text" class="form-control" id="officeHours" name="officeHours"
+                                            value="<%= contact.officeHours %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Office Hours (Tamil)</label>
+                                        <input type="text" class="form-control" id="officeHoursTa" name="officeHoursTa"
+                                            value="<%= contactTa.officeHours || '' %>" placeholder="Translating...">
+                                    </div>
+                                </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">WhatsApp Number (for API)</label>
-                                <input type="text" class="form-control" name="whatsappPhone"
-                                    value="<%= contact.whatsappPhone %>" required>
-                                <small class="text-muted">Enter 10-digit mobile number (e.g., 9876543210). Defaults to
-                                    India (+91) automatically.</small>
-                            </div>
+                                <div class="mb-3">
+                                    <label class="form-label">WhatsApp Number (for API)</label>
+                                    <input type="text" class="form-control" name="whatsappPhone"
+                                        value="<%= contact.whatsappPhone %>" required>
+                                    <small class="text-muted">Enter 10-digit mobile number (e.g., 9876543210). Defaults
+                                        to
+                                        India (+91) automatically.</small>
+                                </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Embed Map (Paste full HTML code)</label>
-                                <textarea class="form-control" name="mapUrl" rows="4"
-                                    required><%= contact.mapUrl %></textarea>
-                                <small class="text-muted">
-                                    <strong>How to get this:</strong><br>
-                                    1. Go to Google Maps and find your location.<br>
-                                    2. Click <strong>Share</strong> -> <strong>Embed a map</strong>.<br>
-                                    3. Click <strong>Copy HTML</strong> and paste it here entirely.
-                                </small>
-                            </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Embed Map (Paste full HTML code)</label>
+                                    <textarea class="form-control" name="mapUrl" rows="4"
+                                        required><%= contact.mapUrl %></textarea>
+                                    <small class="text-muted">
+                                        <strong>How to get this:</strong><br>
+                                        1. Go to Google Maps and find your location.<br>
+                                        2. Click <strong>Share</strong> -> <strong>Embed a map</strong>.<br>
+                                        3. Click <strong>Copy HTML</strong> and paste it here entirely.
+                                    </small>
+                                </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Direct Google Maps Link (for Directions)</label>
-                                <input type="text" class="form-control" name="mapLink"
-                                    value="<%= contact.mapLink || '' %>" placeholder="https://maps.app.goo.gl/..."
-                                    required>
-                                <small class="text-muted">Use the "Share" link from Google Maps (Browser URL).</small>
-                            </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Direct Google Maps Link (for Directions)</label>
+                                    <input type="text" class="form-control" name="mapLink"
+                                        value="<%= contact.mapLink || '' %>" placeholder="https://maps.app.goo.gl/..."
+                                        required>
+                                    <small class="text-muted">Use the "Share" link from Google Maps (Browser
+                                        URL).</small>
+                                </div>
 
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-success btn-lg">Update Contact Info</button>
-                                <a href="/admin/dashboard" class="btn btn-secondary">Cancel</a>
-                            </div>
-                        </form>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-success btn-lg">Update Contact Info</button>
+                                    <a href="/admin/dashboard" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <%- include('../../partials/footer') %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                setupTranslation('address', 'addressTa');
+                setupTranslation('officeHours', 'officeHoursTa');
+            });
+        </script>
+
+        <%- include('../../partials/footer') %>

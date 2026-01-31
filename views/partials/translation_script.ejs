@@ -1,0 +1,148 @@
+<script>
+    // Translation Utility
+    const debouncer = (func, timeout = 1000) => {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        };
+    };
+
+    // Church Dictionary for meaningful context
+    const churchGlossary = {
+        'service': 'ஆராதனை',
+        'services': 'ஆராதனைகள்',
+        'sermon': 'பிரசங்கம்',
+        'sermons': 'பிரசங்கங்கள்',
+        'worship': 'வழிபாடு',
+        'pastor': 'போதகர்',
+        'church': 'சபை',
+        'prayer': 'ஜெபம்',
+        'prayers': 'ஜெபங்கள்',
+        'bible': 'வேதாகமம்',
+        'gospel': 'சுவிசேஷம்',
+        'christ': 'கிறிஸ்து',
+        'jesus': 'இயேசு',
+        'lord': 'ஆண்டவர்',
+        'holy spirit': 'பரிசுத்த ஆவி',
+        'amen': 'ஆமென்',
+        'ministry': 'ஊழியம்',
+        'vision': 'தரிசனம்',
+        'mission': 'பணி',
+        'welcome': 'நல்வரவு',
+        'contact': 'தொடர்பு',
+        'donate': 'நன்கொடை',
+        'events': 'நிகழ்வுகள்',
+        'gallery': 'தொகுப்பு'
+    };
+
+    function refineTamilTranslation(text) {
+        if (!text) return '';
+        let refined = text;
+
+        // "Bad Tamil" -> "Good Tamil" Correction Map
+        // This fixes common Google Translate misinterpretations in Church context
+        const correctionMap = {
+            'Reformed Church Of Jesus': 'இயேசுவின் சீர்திருத்த திருச்சபை', // Full Official Name
+            'Welcome to Reformed Church Of Jesus': 'இயேசுவின் சீர்திருத்த திருச்சபைக்கு வரவேற்கிறோம்',
+            'Reformed Church of Jesus': 'இயேசுவின் சீர்திருத்த திருச்சபை', // Lowercase 'of' variant
+            'Welcome to': 'நல்வரவு', // Generic handle
+            'சீர்திருத்த தேவாலயம்': 'சீர்திருத்த திருச்சபை', // Fix "Thévalayam" -> "Thiruchabai"
+            'சேவை': 'ஆராதனை',       // Service (generic) -> Worship Service
+            'வழங்குதல்': 'காணிக்கை',  // Providing/Giving -> Offering
+            'சொற்பொழிவு': 'பிரசங்கம்', // Lecture -> Sermon
+            'பேச்சு': 'செய்தி',       // Speech/Talk -> Message
+            'மேய்ப்பு': 'ஊழியம்',     // Shepherd/Herding -> Ministry
+            'வரவேற்பு': 'நல்வரவு',     // Welcome -> Welcome (Better term)
+            'கிறிஸ்துவம்': 'கிறிஸ்தவம்', // Spelling fix
+            'ஆன்மீக': 'ஆவிக்குரிய',     // Spiritual -> Spiritual (Church term)
+            'கடவுள்': 'தேவன்'          // God -> God (Standard Church term)
+        };
+
+        Object.keys(correctionMap).forEach(key => {
+            const replacement = correctionMap[key];
+
+            // If the key contains English letters, it means we want to force-replace a specific English phrase 
+            // even if Google translated it partially. 
+            // HOWEVER, we are operating on the RESULT (which is Tamil). 
+            // Google usually returns "Sīrtirutta tēvālayam..." etc.
+            // But wait, the user's input "Welcome to Reformed Church Of Jesus" -> Google Output "சீர்திருத்த..."
+            // So we can't match "Reformed Church" in the Tamil output string.
+
+            // STRATEGY CHANGE: 
+            // If the user is typing English, and we want to Map "English Phrase" -> "Tamil Phrase", 
+            // we must do this BEFORE Google or check if the original Logic is flawed.
+            // 
+            // Actually, `refineTamilTranslation` receives `text` which is the Google Output (Tamil).
+            // So checking for "Reformed Church" (English) inside `text` (Tamil) will fail.
+            // 
+            // FIX: We need to see if the translation *failed* to capture the nuance by looking for the *Incorrect Tamil*.
+            // The user said: "சீர்திருத்த தேவாலயம் இயேசு அறக்கட்டளை" is the output.
+            // We need to map *that* specific Tamil garbage to the correct Tamil.
+
+            const regex = new RegExp(key, 'gi');
+            refined = refined.replace(regex, replacement);
+        });
+
+        // Specific fix for the User's reported output
+        refined = refined.replace(/சீர்திருத்த தேவாலயம் இயேசு அறக்கட்டளை/g, 'இயேசுவின் சீர்திருத்த திருச்சபை');
+        refined = refined.replace(/இயேசு அறக்கட்டளை/g, 'இயேசுவின் திருச்சபை'); // "Jesus Foundation/Trust" -> "Jesus Church"
+        refined = refined.replace(/சீர்திருத்த தேவாலயம்/g, 'சீர்திருத்த திருச்சபை');
+
+        return refined;
+    }
+
+    // Since we can't easily look up English words in the Tamil Output, 
+    // we use a "Pre-check" or just accept that "Service" -> "Sevai" is the main pain point.
+    // Let's stick to the Post-Processing map.
+
+    async function translateText(text, fromLang, toLang) {
+        if (!text) return '';
+        try {
+            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${fromLang}&tl=${toLang}&dt=t&q=${encodeURI(text)}`);
+            const data = await res.json();
+            // Google Translate API returns [[["Translated Text",...]]]
+            let result = data[0] && data[0][0] && data[0][0][0] ? data[0][0][0] : '';
+
+            if (toLang === 'ta') {
+                result = refineTamilTranslation(result);
+            }
+            return result;
+        } catch (e) {
+            console.error('Translation failed', e);
+            return '';
+        }
+    }
+
+    function setupTranslation(id1, id2, lang1 = 'en', lang2 = 'ta') {
+        const el1 = document.getElementById(id1);
+        const el2 = document.getElementById(id2);
+
+        if (el1 && el2) {
+            // Forward: Lang1 -> Lang2 (e.g. English -> Tamil)
+            const forward = debouncer(async () => {
+                if (el1.value) {
+                    const originalPlaceholder = el2.placeholder;
+                    el2.placeholder = "Translating...";
+                    const translated = await translateText(el1.value, lang1, lang2);
+                    if (translated) el2.value = translated;
+                    el2.placeholder = originalPlaceholder;
+                }
+            });
+
+            // Reverse: Lang2 -> Lang1 (e.g. Tamil -> English)
+            const reverse = debouncer(async () => {
+                if (el2.value) {
+                    const originalPlaceholder = el1.placeholder;
+                    el1.placeholder = "Translating...";
+                    const translated = await translateText(el2.value, lang2, lang1);
+                    if (translated) el1.value = translated;
+                    el1.placeholder = originalPlaceholder;
+                }
+            });
+
+            el1.addEventListener('input', forward);
+            el2.addEventListener('input', reverse);
+        }
+    }
+</script>

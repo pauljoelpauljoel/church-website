@@ -5,26 +5,37 @@
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <div class="card shadow-sm">
-                        <div class="card-header bg-white">
-                            <h3 class="mb-0">Add New Photo</h3>
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0">Edit Photo</h3>
+                            <a href="/admin/gallery" class="btn btn-light btn-sm">Back</a>
                         </div>
                         <div class="card-body">
-                            <form action="/admin/gallery" method="POST" enctype="multipart/form-data">
+                            <form action="/admin/gallery/<%= photo.id %>?_method=PUT" method="POST"
+                                enctype="multipart/form-data">
+
+                                <div class="mb-4 text-center">
+                                    <label class="form-label d-block text-start">Current Photo</label>
+                                    <img src="<%= photo.url %>" alt="Current Photo" class="img-fluid rounded shadow-sm"
+                                        style="max-height: 200px;">
+                                </div>
+
                                 <div class="mb-3">
-                                    <label for="image" class="form-label">Upload Photo</label>
-                                    <input type="file" class="form-control" id="image" name="image" accept="image/*"
-                                        required>
-                                    <div class="form-text">Select an image file from your computer.</div>
+                                    <label for="image" class="form-label">Change Photo (Optional)</label>
+                                    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                    <div class="form-text">Leave empty to keep the current photo.</div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="category" class="form-label">Category</label>
                                     <select class="form-select" id="category" name="category" required>
-                                        <option value="General">General</option>
+                                        <option value="General" <%=photo.category==='General' ? 'selected' : '' %>
+                                            >General
+                                        </option>
                                         <% if(typeof categories !=='undefined' && categories.length> 0) { %>
                                             <% categories.forEach(cat=> { %>
                                                 <% if(cat.name !=='General' ) { %>
-                                                    <option value="<%= cat.name %>">
+                                                    <option value="<%= cat.name %>" <%=photo.category===cat.name
+                                                        ? 'selected' : '' %>>
                                                         <%= cat.name %>
                                                     </option>
                                                     <% } %>
@@ -37,18 +48,18 @@
                                     <div class="col-md-6">
                                         <label for="caption" class="form-label">Description (English)</label>
                                         <input type="text" class="form-control" id="caption" name="caption"
+                                            value="<%= photo.caption %>"
                                             placeholder="Describe what is happening in the photo..." required>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="captionTa" class="form-label">Description (Tamil)</label>
                                         <input type="text" class="form-control" id="captionTa" name="captionTa"
-                                            placeholder="Translating...">
+                                            value="<%= photo.captionTa || '' %>" placeholder="Translating...">
                                     </div>
                                 </div>
-                                <div class="form-text mb-3">This will be shown to viewers.</div>
 
                                 <div class="d-grid gap-2">
-                                    <button type="submit" class="btn btn-primary">Add Photo</button>
+                                    <button type="submit" class="btn btn-primary">Update Photo</button>
                                     <a href="/admin/gallery" class="btn btn-secondary">Cancel</a>
                                 </div>
                             </form>
